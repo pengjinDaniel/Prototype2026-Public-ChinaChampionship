@@ -20,6 +20,14 @@ public class Intake extends SubsystemBase {
         isRunning = !isRunning;
     }
 
+    public void startRunning() {
+        isRunning = true;
+    }
+
+    public void stopRunning() {
+        isRunning = false;
+    }
+
     public boolean isRunning() {
         return isRunning;
     }

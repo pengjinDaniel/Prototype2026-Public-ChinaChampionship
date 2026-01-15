@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems.shooter;
 
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 @Config
 public class ShooterConstants {
@@ -17,10 +18,11 @@ public class ShooterConstants {
     /**
      * In Ticks Per Second
      */
-    public static double stopVelocity = 0.3;
+    public static double stopVelocity = 300;
     public static double fastVelocity = 1300; // 1520;
     public static double slowVelocity = 920; // 1300;
     public static double releaseVelocity = 1000;
     public static double slowPower = 0.8;
     public static double fastPower = 0.95;
+    public static PIDFCoefficients pidfCoefficients = new PIDFCoefficients(140, 0, 0, 0);
 }
