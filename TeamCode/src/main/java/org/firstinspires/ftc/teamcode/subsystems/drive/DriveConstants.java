@@ -23,7 +23,6 @@ public class DriveConstants {
     public static DistanceUnit distanceUnit = DistanceUnit.INCH;
     public static AngleUnit angleUnit = AngleUnit.RADIANS;
 
-    public static double linearScalar = 1.00026, angularScalar = 0.99414;
     public static double forwardVelocity = 81.938, strafeVelocity = 63.501;
     public static double forwardAcceleration = -33.933, strafeAcceleration = -53.729;
 
@@ -33,13 +32,13 @@ public class DriveConstants {
     public static double kI_alignH = 0;
     public static double kD_alignH = -0.01;
     public static double kF_alignH = -0.03;
-    public static double kP_followXY = 0;
-    public static double kP_followH = 0;
 
     public static double xNearPoseRed = 139, yNearPoseRed = 140;
     public static double xNearPoseBlue = 5, yNearPoseBlue = 140;
     public static double xFarPoseRed = 137, yFarPoseRed = 140;
     public static double xFarPoseBlue = 7, yFarPoseBlue = 140;
+    public static Pose2D blueGoalPose = new Pose2D(distanceUnit, 6, 140, angleUnit, 0);
+    public static Pose2D redGoalPose = new Pose2D(distanceUnit, 138, 140, angleUnit, 0);
 
     //86 24, 60 86
     public static double nearGoalDistance = Util.poseDistance(new Pose2D(DistanceUnit.INCH, 60,
@@ -48,4 +47,6 @@ public class DriveConstants {
     public static double farGoalDistance = Util.poseDistance(new Pose2D(DistanceUnit.INCH, 86,
             24, AngleUnit.RADIANS, 0), new Pose2D(DistanceUnit.INCH, xFarPoseBlue,
             yFarPoseBlue, AngleUnit.RADIANS, 0));
+    public static double nearFlyTime = 0;
+    public static double farFlyTime = 0;
 }

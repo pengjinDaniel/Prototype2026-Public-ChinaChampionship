@@ -16,7 +16,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.commands.TeleOpDriveCommand;
-import org.firstinspires.ftc.teamcode.commands.TransitCommand;
 import org.firstinspires.ftc.teamcode.subsystems.drive.Drive;
 import org.firstinspires.ftc.teamcode.subsystems.intake.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.shooter.Shooter;
@@ -56,8 +55,7 @@ public abstract class TeleOpBase extends CommandOpMode {
                 new InstantCommand(() -> gamepad1.rumble(1.0, 1.0, 800))
         );
 
-        drive.setDefaultCommand(new TeleOpDriveCommand(drive, gamepadEx1,
-                () -> gamepadEx1.getButton(GamepadKeys.Button.A)));
+        drive.setDefaultCommand(new TeleOpDriveCommand(drive, gamepadEx1));
 
 
         new FunctionalButton(

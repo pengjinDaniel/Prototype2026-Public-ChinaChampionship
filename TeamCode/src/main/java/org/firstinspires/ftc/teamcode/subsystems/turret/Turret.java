@@ -35,7 +35,7 @@ public class Turret extends SubsystemBase {
     }
 
     public void setTurret(double setpoint) {
-        this.setpoint = setpoint;
+        this.setpoint = Util.adjustRange(setpoint);
     }
 
     @Override

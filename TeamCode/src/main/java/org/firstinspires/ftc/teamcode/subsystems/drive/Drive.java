@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.subsystems.drive;
 
 import static com.arcrobotics.ftclib.purepursuit.PurePursuitUtil.angleWrap;
 import static com.qualcomm.robotcore.util.Range.clip;
+import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.blueGoalPose;
+import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.farFlyTime;
 import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.farGoalDistance;
 import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.kD_alignH;
 import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.kF_alignH;
@@ -9,7 +11,9 @@ import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.kI_
 import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.kP_alignH;
 import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.kP_brakeH;
 import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.kP_brakeXY;
+import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.nearFlyTime;
 import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.nearGoalDistance;
+import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.redGoalPose;
 import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.strafingBalance;
 import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.xFarPoseBlue;
 import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.xFarPoseRed;
@@ -34,6 +38,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 import org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants;
 import org.firstinspires.ftc.teamcode.subsystems.vision.Vision;
 import org.firstinspires.ftc.teamcode.utils.Util;
@@ -53,8 +58,7 @@ public class Drive extends SubsystemBase {
 
     public enum DriveState {
         STOP,
-        TELEOP,
-        ALIGN;
+        TELEOP;
         DriveState() {}
     }
 
@@ -217,44 +221,35 @@ public class Drive extends SubsystemBase {
         yawOffset = alliance == Alliance.BLUE? Math.PI: 0;
     }
 
-    public double distanceToGoal() {
-        if (getPose().getY(DriveConstants.distanceUnit) >= 48 && alliance == Alliance.RED) {
-            return poseDistance(getPose(), new Pose2D(DriveConstants.distanceUnit,
-                    xNearPoseRed, yNearPoseRed, DriveConstants.angleUnit, 0));
-        } else if (getPose().getY(DriveConstants.distanceUnit) >= 48 && alliance == Alliance.BLUE) {
-            return poseDistance(getPose(), new Pose2D(DriveConstants.distanceUnit,
-                    xNearPoseBlue, yNearPoseBlue, DriveConstants.angleUnit, 0));
-        } else if (getPose().getY(DriveConstants.distanceUnit) < 48 && alliance == Alliance.RED) {
-            return poseDistance(getPose(), new Pose2D(DriveConstants.distanceUnit,
-                    xFarPoseRed, yFarPoseRed, DriveConstants.angleUnit, 0));
-        } else if (getPose().getY(DriveConstants.distanceUnit) < 48 && alliance == Alliance.BLUE) {
-            return poseDistance(getPose(), new Pose2D(DriveConstants.distanceUnit,
-                    xFarPoseRed, yFarPoseRed, DriveConstants.angleUnit, 0));
-        }
-        return -1;
+//    public double distanceToGoal() {
+//        if (getPose().getY(DriveConstants.distanceUnit) >= 48 && alliance == Alliance.RED) {
+//            return poseDistance(getPose(), new Pose2D(DriveConstants.distanceUnit,
+//                    xNearPoseRed, yNearPoseRed, DriveConstants.angleUnit, 0));
+//        } else if (getPose().getY(DriveConstants.distanceUnit) >= 48 && alliance == Alliance.BLUE) {
+//            return poseDistance(getPose(), new Pose2D(DriveConstants.distanceUnit,
+//                    xNearPoseBlue, yNearPoseBlue, DriveConstants.angleUnit, 0));
+//        } else if (getPose().getY(DriveConstants.distanceUnit) < 48 && alliance == Alliance.RED) {
+//            return poseDistance(getPose(), new Pose2D(DriveConstants.distanceUnit,
+//                    xFarPoseRed, yFarPoseRed, DriveConstants.angleUnit, 0));
+//        } else if (getPose().getY(DriveConstants.distanceUnit) < 48 && alliance == Alliance.BLUE) {
+//            return poseDistance(getPose(), new Pose2D(DriveConstants.distanceUnit,
+//                    xFarPoseRed, yFarPoseRed, DriveConstants.angleUnit, 0));
+//        }
+//        return -1;
+//    }
+
+    public double getFlyTime(Alliance alliance) {
+        Pose2D goalPose = alliance == Alliance.RED? redGoalPose : blueGoalPose;
+        return nearFlyTime + (farFlyTime - nearFlyTime) / (farGoalDistance - nearGoalDistance)
+                * (poseDistance(getExpectedPose(), goalPose) - nearGoalDistance);
     }
 
-    public double getShooterVelocity() {
-        if (distanceToGoal() != -1) {
-            double distance = distanceToGoal();
-            double normalizedDistance = (distance - nearGoalDistance) / (farGoalDistance - nearGoalDistance);
-
-            double nonlinearFactor = 1.0 + 0.04 * normalizedDistance;
-
-            double finalVelocity = (ShooterConstants.slowVelocity
-                    + (ShooterConstants.fastVelocity - ShooterConstants.slowVelocity)
-                    * normalizedDistance) * nonlinearFactor;
-
-            return 20 * Math.ceil(finalVelocity / 20);
-        }
-        return 0;
-    }
-
-    public double getShooterPower() {
-        if (distanceToGoal() != -1) return ShooterConstants.slowPower
-                + (ShooterConstants.fastPower - ShooterConstants.slowPower)
-                / (farGoalDistance - nearGoalDistance) * (distanceToGoal() - nearGoalDistance);
-        return 0;
+    public Pose2D getExpectedPose(Alliance alliance) {
+        return new Pose2D(DriveConstants.distanceUnit, getPose().getX(DriveConstants.distanceUnit)
+                + od.getVelX(DriveConstants.distanceUnit) * getFlyTime(alliance), getPose().getY(
+                        DriveConstants.distanceUnit) + od.getVelY(DriveConstants.distanceUnit)
+                * getFlyTime(alliance), DriveConstants.angleUnit, getPose().getHeading(DriveConstants.angleUnit)
+                + od.getHeadingVelocity(UnnormalizedAngleUnit.RADIANS) * getFlyTime(alliance));
     }
 
     @Override
