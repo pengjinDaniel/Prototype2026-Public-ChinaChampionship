@@ -15,7 +15,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.commands.ShooterAlignCommand;
 import org.firstinspires.ftc.teamcode.commands.TeleOpDriveCommand;
+import org.firstinspires.ftc.teamcode.commands.TurretAlignCommand;
 import org.firstinspires.ftc.teamcode.subsystems.drive.Drive;
 import org.firstinspires.ftc.teamcode.subsystems.intake.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.shooter.Shooter;
@@ -56,7 +58,10 @@ public abstract class TeleOpBase extends CommandOpMode {
         );
 
         drive.setDefaultCommand(new TeleOpDriveCommand(drive, gamepadEx1));
-
+        turret.setDefaultCommand(new TurretAlignCommand(drive, turret, getAlliance(),
+                () -> gamepadEx1.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)));
+        shooter.setDefaultCommand(new ShooterAlignCommand(drive, shooter, getAlliance(),
+                () -> gamepadEx1.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)));
 
         new FunctionalButton(
                 () -> gamepadEx1.getButton(GamepadKeys.Button.B)
@@ -74,16 +79,6 @@ public abstract class TeleOpBase extends CommandOpMode {
                 () -> gamepadEx1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) >= 0.5
         ).whenPressed(
                 new InstantCommand(() -> intake.toggle())
-        );
-
-        new FunctionalButton(
-                () -> gamepadEx1.getButton(GamepadKeys.Button.RIGHT_BUMPER)
-        ).whenPressed(
-                new ConditionalCommand(new InstantCommand(
-                        () -> shooter.setShooterState(Shooter.ShooterState.DYNAMIC)),
-                        new InstantCommand(
-                                () -> shooter.setShooterState(Shooter.ShooterState.STOP)),
-                        () -> shooter.getShooterState() == Shooter.ShooterState.STOP)
         );
 
         new FunctionalButton(

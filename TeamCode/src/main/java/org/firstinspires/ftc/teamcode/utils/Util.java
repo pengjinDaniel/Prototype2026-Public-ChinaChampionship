@@ -17,6 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.subsystems.drive.Drive;
 import org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants;
+import org.opencv.core.Mat;
 
 public class Util {
     public static boolean epsilonEqual(double a, double b, double epsilon) {
@@ -37,6 +38,12 @@ public class Util {
     public static double adjustRange(double rad) {
         if (rad > Math.PI) rad -= Math.ceil((rad - Math.PI) / (2 * Math.PI)) * 2 * Math.PI;
         if (rad < -Math.PI) rad += Math.ceil((-Math.PI - rad) / (2 * Math.PI)) * 2 * Math.PI;
+        return rad;
+    }
+
+    public static double adjustRange(double rad, double epsilon) {
+        if (rad > Math.PI + epsilon) rad -= Math.ceil((rad - Math.PI) / (2 * Math.PI)) * 2 * Math.PI;
+        if (rad < -Math.PI - epsilon) rad += Math.ceil((-Math.PI - rad) / (2 * Math.PI)) * 2 * Math.PI;
         return rad;
     }
 

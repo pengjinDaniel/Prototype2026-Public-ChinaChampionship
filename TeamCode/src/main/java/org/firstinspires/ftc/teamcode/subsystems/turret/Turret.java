@@ -11,7 +11,8 @@ public class Turret extends SubsystemBase {
     private TurretState turretState;
     private PIDController pidController;
     private DcMotor turretMotor;
-    private double setpoint;
+    private double actualSetpoint; // In the range [-PI - epsilon, PI + epsilon]
+    private double normalizedSetPoint; // In the range [-PI, PI]
 
     public Turret(HardwareMap hardwareMap) {
         this.turretMotor = hardwareMap.get(DcMotor.class, TurretConstants.turretMotorName);
@@ -19,7 +20,7 @@ public class Turret extends SubsystemBase {
                 TurretConstants.kp, TurretConstants.ki, TurretConstants.kd
         );
         this.turretState = TurretState.INIT;
-        setpoint = TurretConstants.initPos;
+        normalizedSetPoint = TurretConstants.initPos;
     }
 
     public enum TurretState {
@@ -31,18 +32,36 @@ public class Turret extends SubsystemBase {
 
     public boolean isAligned(){
         return Util.epsilonEqual(turretMotor.getCurrentPosition(),
-                setpoint, TurretConstants.turretEpsilon);
+                normalizedSetPoint, TurretConstants.turretEpsilon);
     }
 
+    /**
+    * @param setpoint the setpoint of the turret that will normalize into the range [-PI, PI].
+     */
     public void setTurret(double setpoint) {
-        this.setpoint = Util.adjustRange(setpoint);
+        this.normalizedSetPoint = Util.adjustRange(setpoint);
+    }
+
+    public double getActualPosition() {
+        return turretMotor.getCurrentPosition();
+    }
+
+    public double getNormalizedPosition() {
+        return Util.adjustRange(getActualPosition());
     }
 
     @Override
     public void periodic() {
-        if (!isAligned()) {
-            turretMotor.setPower(pidController.calculate(turretMotor.getCurrentPosition(), setpoint));
+        if (Math.abs(normalizedSetPoint - getActualPosition()) > Math.PI) {
+            if (normalizedSetPoint + Math.PI < TurretConstants.turretEpsilon) {
+                actualSetpoint = normalizedSetPoint + 2 * Math.PI;
+            }
+            else if (normalizedSetPoint - Math.PI > TurretConstants.turretEpsilon) {
+                actualSetpoint = normalizedSetPoint - 2 * Math.PI;
+            }
         }
-
+        if (turretState == TurretState.ACTIVE) {
+            turretMotor.setPower(pidController.calculate(getActualPosition(), actualSetpoint));
+        }
     }
 }

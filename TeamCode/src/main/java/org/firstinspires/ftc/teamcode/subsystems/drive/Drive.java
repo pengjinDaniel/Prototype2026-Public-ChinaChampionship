@@ -241,7 +241,7 @@ public class Drive extends SubsystemBase {
     public double getFlyTime(Alliance alliance) {
         Pose2D goalPose = alliance == Alliance.RED? redGoalPose : blueGoalPose;
         return nearFlyTime + (farFlyTime - nearFlyTime) / (farGoalDistance - nearGoalDistance)
-                * (poseDistance(getExpectedPose(), goalPose) - nearGoalDistance);
+                * (poseDistance(getExpectedPose(alliance), goalPose) - nearGoalDistance);
     }
 
     public Pose2D getExpectedPose(Alliance alliance) {
