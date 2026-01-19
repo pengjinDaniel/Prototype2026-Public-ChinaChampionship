@@ -6,6 +6,7 @@ public final class Units {
     private static final double kSecondsPerMinute = 60;
     private static final double kMillisecondsPerSecond = 1000;
     private static final double kKilogramsPerLb = 0.453592;
+    private static final double kTicksPerRotation = 8192;
 
     /** Utility class, so constructor is private. */
     private Units() {
@@ -178,5 +179,12 @@ public final class Units {
 
     public static double inchesToMm(double inches) {
         return 1000 * inchesToMeters(inches);
+    }
+
+    public static double ticksToRadians(int ticks) {
+        return (double) ticks / kTicksPerRotation * 2 * Math.PI;
+    }
+    public static int radiansToTicks(double radians) {
+        return (int) (radians / Math.PI / 2 * kTicksPerRotation);
     }
 }

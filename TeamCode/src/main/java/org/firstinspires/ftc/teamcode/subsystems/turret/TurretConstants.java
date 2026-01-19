@@ -7,4 +7,5 @@ public class TurretConstants {
     public static double ki = 0;
     public static double kd = 0;
     public static double turretEpsilon = 0;
+    public static double ticksPerRot = 8192;
 }

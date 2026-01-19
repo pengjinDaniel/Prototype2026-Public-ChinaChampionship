@@ -8,12 +8,13 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 public class ShooterConstants {
     public static String leftShooterName = "leftShooterMotor";
     public static String rightShooterName = "rightShooterMotor";
-    public static String brakeServoName = "brakeServo";
+    public static String pitchServoName = "pitchServo";
 
     public static double shooterEpsilon = 20;
 
-    public static double brakePose = 0.23;
-    public static double releasePose = 0.5;
+    public static double highPose = 0.23;
+    public static double middlePose = 0.5;
+    public static double lowPose = 0;
 
     /**
      * In Ticks Per Second

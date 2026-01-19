@@ -28,9 +28,20 @@ public class TurretAlignCommand extends CommandBase {
     }
 
     @Override
+    public void initialize() {
+        turret.setTurretState(Turret.TurretState.ACTIVE);
+    }
+
+    @Override
     public void execute() {
         if (killButton.getAsBoolean()) isAlign = !isAlign;
-        PolarVector goalInRobotSys = Util.goalInRobotSys(drive.getExpectedPose(alliance), alliance);
-        turret.setTurret(goalInRobotSys.getHeading(DriveConstants.angleUnit));
+        if (isAlign) {
+            PolarVector goalInRobotSys = Util.goalInRobotSys(drive.getExpectedPose(alliance), alliance);
+            //turret.setTurret(goalInRobotSys.getHeading(DriveConstants.angleUnit));
+            turret.setTurret(0);
+        }
+        else {
+            turret.setTurretState(Turret.TurretState.INIT);
+        }
     }
 }

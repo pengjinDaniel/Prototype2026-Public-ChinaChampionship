@@ -49,4 +49,6 @@ public class DriveConstants {
             yFarPoseBlue, AngleUnit.RADIANS, 0));
     public static double nearFlyTime = 0;
     public static double farFlyTime = 0;
+
+    public static Pose2D autoEndPose = new Pose2D(DistanceUnit.INCH, 0, 0, AngleUnit.RADIANS, 0);
 }

@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.utils.Util;
 public class Shooter extends SubsystemBase {
     private DcMotorEx leftShooter;
     private DcMotorEx rightShooter;
+    private Servo pitchServo;
     private PIDFCoefficients pidfCoefficients;
     public TelemetryPacket packet = new TelemetryPacket();
 
@@ -27,6 +28,7 @@ public class Shooter extends SubsystemBase {
     public Shooter(final HardwareMap hardwareMap) {
         leftShooter = hardwareMap.get(DcMotorEx.class, ShooterConstants.leftShooterName);
         rightShooter = hardwareMap.get(DcMotorEx.class, ShooterConstants.rightShooterName);
+        pitchServo = hardwareMap.get(Servo.class, ShooterConstants.pitchServoName);
         pidfCoefficients = ShooterConstants.pidfCoefficients;
         rightShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -46,8 +48,24 @@ public class Shooter extends SubsystemBase {
         }
     }
 
+    public enum PitchState {
+        HIGH(ShooterConstants.highPose),
+        MIDDLE(ShooterConstants.middlePose),
+        LOW(ShooterConstants.lowPose);
+
+        final double servoPos;
+
+        PitchState(double servoPos) {
+            this.servoPos = servoPos;
+        }
+    }
+
     public void setShooterState(ShooterState state) {
         shooterState = state;
+    }
+
+    public void setPitchState(PitchState pitchState) {
+        pitchServo.setPosition(pitchState.servoPos);
     }
 
     public ShooterState getShooterState() {
@@ -69,15 +87,14 @@ public class Shooter extends SubsystemBase {
 
     @Override
     public void periodic() {
-//        if (shooterState != ShooterState.STOP) {
-//            double currentPower = pidController.calculate(
-//                    rightShooter.getVelocity(), shooterState.shooterVelocity);
-//            leftShooter.setPower(-currentPower);
-//            rightShooter.setPower(currentPower);
-//            packet.put("currentPower", currentPower);
-//        }
-        rightShooter.setVelocity(shooterState.shooterVelocity);
-        leftShooter.setVelocity(-shooterState.shooterVelocity);
+        if (shooterState != ShooterState.DYNAMIC) {
+            rightShooter.setVelocity(shooterState.shooterVelocity);
+            leftShooter.setVelocity(-shooterState.shooterVelocity);
+        }
+        else {
+            rightShooter.setVelocity(dynamicSpeed);
+            leftShooter.setVelocity(-dynamicSpeed);
+        }
 
         packet.put("shooterVelocity", rightShooter.getVelocity());
         packet.put("shooterPower", rightShooter.getPower());
