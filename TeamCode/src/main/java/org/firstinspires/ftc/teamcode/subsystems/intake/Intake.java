@@ -12,7 +12,7 @@ public class Intake extends SubsystemBase {
 
     public Intake(HardwareMap hardwareMap) {
         this.intakeMotor = hardwareMap.get(DcMotor.class, IntakeConstants.intakeMotorName);
-        this.intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        this.intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         this.isRunning = false;
     }
 
