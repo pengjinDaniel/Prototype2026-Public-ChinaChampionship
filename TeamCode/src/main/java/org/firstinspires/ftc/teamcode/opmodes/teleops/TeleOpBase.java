@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.ShooterAlignCommand;
 import org.firstinspires.ftc.teamcode.commands.TeleOpDriveCommand;
 import org.firstinspires.ftc.teamcode.commands.TurretAlignCommand;
@@ -75,8 +76,8 @@ public abstract class TeleOpBase extends CommandOpMode {
 
         new FunctionalButton(
                 () -> gamepadEx1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) >= 0.5
-        ).whenPressed(
-                new InstantCommand(() -> intake.toggle())
+        ).whenHeld(
+                new IntakeCommand(intake)
         );
 
         new FunctionalButton(

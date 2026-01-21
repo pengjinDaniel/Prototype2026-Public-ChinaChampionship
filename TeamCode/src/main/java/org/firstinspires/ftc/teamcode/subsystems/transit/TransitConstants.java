@@ -4,11 +4,10 @@ import com.acmerobotics.dashboard.config.Config;
 
 @Config
 public class TransitConstants {
-    public static String transitName = "transitMotor";
     public static String limitServoName = "limitServo";
 
-    public static double limitServoClosePos = 0.5;
-    public static double limitServoOpenPos = 0.2;
+    public static double limitServoClosePos = 0.35;
+    public static double limitServoOpenPos = 0.07;
 
     public static double transitIntakePower = 0.4;
     public static double transitShootPower = 1.0;
