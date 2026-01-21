@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.teleops;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
@@ -34,20 +35,20 @@ public abstract class TeleOpBase extends CommandOpMode {
     public Shooter shooter;
     public Transit transit;
     public Intake intake;
-//    public Turret turret;
+    public Turret turret;
     public ElapsedTime timer;
 
     protected abstract Drive.Alliance getAlliance();
 
     @Override
     public void initialize() {
-        drive = new Drive(hardwareMap, getAlliance());
+        drive = new Drive(hardwareMap, getAlliance(), telemetry);
         gamepadEx1 = new GamepadEx(gamepad1);
         shooter = new Shooter(hardwareMap);
         transit = new Transit(hardwareMap);
         intake = new Intake(hardwareMap);
         timer = new ElapsedTime();
-//        turret = new Turret(hardwareMap);
+        turret = new Turret(hardwareMap, telemetry);
         timer.reset();
 
         new FunctionalButton(
@@ -57,8 +58,8 @@ public abstract class TeleOpBase extends CommandOpMode {
         );
 
         drive.setDefaultCommand(new TeleOpDriveCommand(drive, gamepadEx1));
-//        turret.setDefaultCommand(new TurretAlignCommand(drive, turret, getAlliance(),
-//                () -> gamepadEx1.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)));
+        turret.setDefaultCommand(new TurretAlignCommand(drive, turret, getAlliance(),
+                () -> gamepadEx1.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)));
 //        shooter.setDefaultCommand(new ShooterAlignCommand(drive, shooter, getAlliance(),
 //                () -> gamepadEx1.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)));
 

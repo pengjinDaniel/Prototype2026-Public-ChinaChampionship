@@ -6,7 +6,7 @@ public final class Units {
     private static final double kSecondsPerMinute = 60;
     private static final double kMillisecondsPerSecond = 1000;
     private static final double kKilogramsPerLb = 0.453592;
-    private static final double kTicksPerRotation = 8192;
+    private static final double kTicksPerRotation = 8192 * 5.2;
 
     /** Utility class, so constructor is private. */
     private Units() {

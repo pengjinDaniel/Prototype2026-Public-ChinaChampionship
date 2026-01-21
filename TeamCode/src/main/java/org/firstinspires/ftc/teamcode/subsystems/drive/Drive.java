@@ -19,6 +19,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
@@ -33,7 +34,8 @@ public class Drive extends SubsystemBase {
     private final Vision autoApriltag;
     private double yawOffset;// mm
     private Alliance alliance;
-    public DriveState driveState;
+    private DriveState driveState;
+    private Telemetry telemetry;
 
     Pose2D lastPose;
 
@@ -50,13 +52,14 @@ public class Drive extends SubsystemBase {
         Alliance() {}
     }
 
-    public Drive(final HardwareMap hardwareMap, Alliance alliance) {
+    public Drive(final HardwareMap hardwareMap, Alliance alliance, Telemetry telemetry) {
         leftFrontMotor = hardwareMap.get(DcMotor.class, DriveConstants.leftFrontMotorName);
         leftBackMotor = hardwareMap.get(DcMotor.class, DriveConstants.leftBackMotorName);
         rightFrontMotor = hardwareMap.get(DcMotor.class, DriveConstants.rightFrontMotorName);
         rightBackMotor = hardwareMap.get(DcMotor.class, DriveConstants.rightBackMotorName);
         od = hardwareMap.get(GoBildaPinpointDriver.class, DriveConstants.odName);
         driveState = DriveState.STOP;
+        this.telemetry = telemetry;
         this.alliance = alliance;
 
         leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -68,7 +71,7 @@ public class Drive extends SubsystemBase {
 
         od.resetPosAndIMU();
         od.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD,
-                GoBildaPinpointDriver.EncoderDirection.REVERSED);
+                GoBildaPinpointDriver.EncoderDirection.FORWARD);
         od.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         od.setOffsets(xPoseDW, yPoseDW, DriveConstants.distanceUnit);
 
@@ -175,7 +178,7 @@ public class Drive extends SubsystemBase {
 
     public double getFlyTime(Alliance alliance) {
         return nearFlyTime + (farFlyTime - nearFlyTime) / (farGoalDistance - nearGoalDistance)
-                * (Util.goalInRobotSys(getExpectedPose(alliance), alliance).getMagnitude() - nearGoalDistance);
+                * (Util.goalInRobotSys(getPose(), alliance).getMagnitude() - nearGoalDistance);
     }
 
     public Pose2D getExpectedPose(Alliance alliance) {
@@ -192,6 +195,7 @@ public class Drive extends SubsystemBase {
         if (driveState == DriveState.STOP) {
             applyBrake();
         }
+        telemetry.addData("PolarVector", Util.goalInRobotSys(getPose(), alliance).toString());
         lastPose = getPose();
     }
 }

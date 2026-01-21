@@ -1,12 +1,11 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.tests;
 
 import android.graphics.Color;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.arcrobotics.ftclib.controller.PIDController;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -18,12 +17,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Locale;
-import java.util.Queue;
 
 class PIDF {
     public double kP, kI, kD, kF;
@@ -58,11 +52,11 @@ public class DashTuner extends OpMode {
 
     Servo[] servos = new Servo[4];
 
-    PIDController[] pidControllers = {
-            new PIDController(0, 0, 0),
-            new PIDController(0, 0, 0),
-            new PIDController(0, 0, 0),
-            new PIDController(0, 0, 0)
+    PIDFController[] pidfControllers = {
+            new PIDFController(0, 0, 0, 0),
+            new PIDFController(0, 0, 0, 0),
+            new PIDFController(0, 0, 0, 0),
+            new PIDFController(0, 0, 0, 0)
     };
 
     public static String[] colorSensorName = {"", "", "", ""};
@@ -95,7 +89,7 @@ public class DashTuner extends OpMode {
                     );
                 }
                 if (isPositionCloseLoop[i]) {
-                    pidControllers[i].setPID(PIDFs[i].kP, PIDFs[i].kI, PIDFs[i].kD);
+                    pidfControllers[i].setPIDF(PIDFs[i].kP, PIDFs[i].kI, PIDFs[i].kD, PIDFs[i].kF);
                 }
             }
             if (!servoName[i].isEmpty()) {
@@ -136,10 +130,10 @@ public class DashTuner extends OpMode {
                     dashboard.sendTelemetryPacket(packet);
                 }
                 else if (isPositionCloseLoop[i] && !isVelocityCloseLoop[i]) {
-                    pidControllers[i].setPID(PIDFs[i].kP, PIDFs[i].kI, PIDFs[i].kD);
+                    pidfControllers[i].setPIDF(PIDFs[i].kP, PIDFs[i].kI, PIDFs[i].kD, PIDFs[i].kF);
                     double pos = motors[i].getCurrentPosition();
 
-                    motors[i].setPower(pidControllers[i].calculate(pos, motorTarget[i]));
+                    motors[i].setPower(pidfControllers[i].calculate(pos, motorTarget[i]));
 
                     TelemetryPacket packet = new TelemetryPacket();
                     packet.put("targetPosition " + i, motorTarget[i]);

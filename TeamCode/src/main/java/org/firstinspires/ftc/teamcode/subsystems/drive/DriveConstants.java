@@ -16,7 +16,7 @@ public class DriveConstants {
     public static String rightBackMotorName = "rightBackMotor";
     public static String odName = "od";
 
-    public static double xPoseDW = Units.mmToInches(-171.86), yPoseDW = Units.mmToInches(-118.69);
+    public static double xPoseDW = Units.mmToInches(-156.606), yPoseDW = Units.mmToInches(24.682);
 
     public static double strafingBalance = 1.1;
     public static double headingEpsilon = 0.1;

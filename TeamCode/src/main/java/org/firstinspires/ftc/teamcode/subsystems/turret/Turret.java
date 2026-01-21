@@ -2,26 +2,30 @@ package org.firstinspires.ftc.teamcode.subsystems.turret;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.utils.Units;
 import org.firstinspires.ftc.teamcode.utils.Util;
 
 public class Turret extends SubsystemBase {
     private TurretState turretState;
-    private PIDController pidController;
+    private PIDFController pidfController;
     private DcMotor turretMotor;
     private int ticksSetpoint; // In ticks
     private double normalizedSetpoint; // In the range [-PI, PI]
+    private Telemetry telemetry;
 
-    public Turret(HardwareMap hardwareMap) {
+    public Turret(HardwareMap hardwareMap, Telemetry telemetry) {
         this.turretMotor = hardwareMap.get(DcMotor.class, TurretConstants.turretMotorName);
-        this.pidController = new PIDController(
-                TurretConstants.kp, TurretConstants.ki, TurretConstants.kd
+        this.pidfController = new PIDFController(
+                TurretConstants.kP, TurretConstants.kI, TurretConstants.kD, TurretConstants.kF
         );
         this.turretState = TurretState.INIT;
         normalizedSetpoint = TurretConstants.initPos;
+        this.telemetry = telemetry;
     }
 
     public enum TurretState {
@@ -33,7 +37,7 @@ public class Turret extends SubsystemBase {
 
     public boolean isAligned(){
         return Util.epsilonEqual(turretMotor.getCurrentPosition()
-                , ticksSetpoint, TurretConstants.turretEpsilon);
+                , ticksSetpoint, TurretConstants.alignEpsilon);
     }
 
     public void setTurretState(TurretState turretState) {
@@ -51,16 +55,21 @@ public class Turret extends SubsystemBase {
     public void periodic() {
         if (Math.abs(normalizedSetpoint - Units.ticksToRadians(
                 turretMotor.getCurrentPosition())) > Math.PI) {
-            if (normalizedSetpoint + Math.PI < TurretConstants.turretEpsilon) {
+            if (normalizedSetpoint + Math.PI < TurretConstants.rangeEpsilon) {
                 ticksSetpoint = Units.radiansToTicks(normalizedSetpoint + 2 * Math.PI);
             }
-            else if (normalizedSetpoint - Math.PI > TurretConstants.turretEpsilon) {
+            else if (normalizedSetpoint - Math.PI > TurretConstants.rangeEpsilon) {
                 ticksSetpoint = Units.radiansToTicks(normalizedSetpoint - 2 * Math.PI);
             }
+            else ticksSetpoint = Units.radiansToTicks(normalizedSetpoint);
+        }
+        else {
+            ticksSetpoint = Units.radiansToTicks(normalizedSetpoint);
         }
         if (turretState == TurretState.ACTIVE) {
-            turretMotor.setPower(pidController.calculate(
+            turretMotor.setPower(pidfController.calculate(
                     turretMotor.getCurrentPosition(), ticksSetpoint));
         }
+        telemetry.addData("TurretSetpoint", normalizedSetpoint);
     }
 }

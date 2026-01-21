@@ -36,9 +36,9 @@ public class TurretAlignCommand extends CommandBase {
     public void execute() {
         if (killButton.getAsBoolean()) isAlign = !isAlign;
         if (isAlign) {
-            PolarVector goalInRobotSys = Util.goalInRobotSys(drive.getExpectedPose(alliance), alliance);
-            //turret.setTurret(goalInRobotSys.getHeading(DriveConstants.angleUnit));
-            turret.setTurret(0);
+            PolarVector goalInRobotSys = Util.goalInRobotSys(drive.getPose(), alliance);
+            turret.setTurret(goalInRobotSys.getHeading(DriveConstants.angleUnit));
+//            turret.setTurret(0);
         }
         else {
             turret.setTurretState(Turret.TurretState.INIT);

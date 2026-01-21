@@ -42,7 +42,7 @@ public class TeleOpDrive extends CommandOpMode {
 
     @Override
     public void initialize() {
-        drive = new Drive(hardwareMap, Drive.Alliance.BLUE);
+        drive = new Drive(hardwareMap, Drive.Alliance.BLUE, telemetry);
         gamepadEx1 = new GamepadEx(gamepad1);
 //        shooter = new Shooter(hardwareMap);
 //        transit = new Transit(hardwareMap);
