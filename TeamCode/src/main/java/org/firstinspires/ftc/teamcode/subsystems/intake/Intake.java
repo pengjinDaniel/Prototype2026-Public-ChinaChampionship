@@ -16,10 +16,6 @@ public class Intake extends SubsystemBase {
         this.isRunning = false;
     }
 
-    public void toggle() {
-        isRunning = !isRunning;
-    }
-
     public void setRunning(boolean isRunning) {
         this.isRunning = isRunning;
     }

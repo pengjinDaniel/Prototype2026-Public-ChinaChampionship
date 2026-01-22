@@ -1,5 +1,11 @@
 package org.firstinspires.ftc.teamcode.subsystems.shooter;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.kD;
+import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.kF;
+import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.kI;
+import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.kP;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.command.SubsystemBase;
@@ -17,11 +23,8 @@ public class Shooter extends SubsystemBase {
     private DcMotorEx leftShooter;
     private DcMotorEx rightShooter;
     private Servo pitchServo;
-    public TelemetryPacket packet = new TelemetryPacket();
 
     private ShooterState shooterState = ShooterState.STOP;
-
-    public boolean highSpeed;
 
     public double dynamicSpeed;
 
@@ -31,12 +34,10 @@ public class Shooter extends SubsystemBase {
         pitchServo = hardwareMap.get(Servo.class, ShooterConstants.pitchServoName);
         rightShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftShooter.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightShooter.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightShooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,
-                ShooterConstants.pidfCoefficients);
-        leftShooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,
-                ShooterConstants.pidfCoefficients);
+        rightShooter.setVelocityPIDFCoefficients(kP, kI, kD, kF);
+        leftShooter.setVelocityPIDFCoefficients(kP, kI, kD, kF);
+
+        pitchServo.setPosition(PitchState.LOW.servoPos);
     }
 
     public enum ShooterState {
@@ -46,6 +47,10 @@ public class Shooter extends SubsystemBase {
         DYNAMIC(0);
 
         final double shooterVelocity;
+
+        public double getShooterVelocity() {
+            return shooterVelocity;
+        }
 
         ShooterState(double shooterVelocity) {
             this.shooterVelocity = shooterVelocity;
@@ -86,22 +91,27 @@ public class Shooter extends SubsystemBase {
 
     public boolean isShooterAtSetPoint() {
         return Util.epsilonEqual(shooterState.shooterVelocity,
-                rightShooter.getVelocity(), ShooterConstants.shooterEpsilon);
+                -rightShooter.getVelocity(), ShooterConstants.shooterEpsilon);
     }
 
     @Override
     public void periodic() {
         if (shooterState != ShooterState.DYNAMIC) {
-            rightShooter.setVelocity(shooterState.shooterVelocity);
+            rightShooter.setVelocity(-shooterState.shooterVelocity);
             leftShooter.setVelocity(shooterState.shooterVelocity);
+            if (shooterState == ShooterState.STOP) {
+                setPitchState(PitchState.LOW);
+            }
+            if (shooterState == ShooterState.SLOW) {
+                setPitchState(PitchState.MIDDLE);
+            }
+            if (shooterState == ShooterState.FAST) {
+                setPitchState(PitchState.HIGH);
+            }
         }
         else {
             rightShooter.setVelocity(dynamicSpeed);
             leftShooter.setVelocity(dynamicSpeed);
         }
-
-        packet.put("shooterVelocity", rightShooter.getVelocity());
-        packet.put("shooterPower", rightShooter.getPower());
-        FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
 }

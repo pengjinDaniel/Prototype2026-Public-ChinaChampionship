@@ -7,30 +7,30 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Transit extends SubsystemBase {
     public final Servo limitServo;
-    public LimitServoState limitState = LimitServoState.CLOSE;
+    public TransitState transitState = TransitState.CLOSE;
 
     public Transit(HardwareMap hardwareMap) {
-        limitServo = hardwareMap.get(Servo.class, TransitConstants.limitServoName);
+        limitServo = hardwareMap.get(Servo.class, TransitConstants.transitServoName);
     }
 
-    public enum LimitServoState {
-        CLOSE(TransitConstants.limitServoClosePos),
-        OPEN(TransitConstants.limitServoOpenPos);
+    public enum TransitState {
+        CLOSE(TransitConstants.transitServoClosePos),
+        OPEN(TransitConstants.transitServoOpenPos);
 
         final double servoPos;
 
-        LimitServoState(double limitServoPos) {
+        TransitState(double limitServoPos) {
             servoPos = limitServoPos;
         }
     }
 
 
-    public void setLimitServoState(LimitServoState limitServoState) {
-        limitState = limitServoState;
+    public void setState(TransitState transitState) {
+        this.transitState = transitState;
     }
 
     @Override
     public void periodic() {
-        limitServo.setPosition(limitState.servoPos);
+        limitServo.setPosition(transitState.servoPos);
     }
 }

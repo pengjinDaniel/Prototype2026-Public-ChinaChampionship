@@ -91,6 +91,10 @@ public class Drive extends SubsystemBase {
         yawOffset = od.getPosition().getHeading(DriveConstants.angleUnit) + heading;
     }
 
+    public Alliance getAlliance() {
+        return alliance;
+    }
+
     public void setDriveState(DriveState driveState) {
         this.driveState = driveState;
     }
@@ -162,20 +166,6 @@ public class Drive extends SubsystemBase {
         moveRobotFieldRelative(forward, strafe, turn);
     }
 
-    public Pose3D getVisionPose() {
-        return autoApriltag.getRobotPosition();
-    }
-
-    public void visionCalibrate() {
-        Pose3D visionPose = autoApriltag.getRobotPosition();
-        if (visionPose != null){
-            od.setPosition(Util.visionPoseToDWPose(visionPose));
-            od.setHeading(Util.visionPoseToDWPose(visionPose).getHeading(DriveConstants.angleUnit),
-                    DriveConstants.angleUnit);
-        }
-        yawOffset = alliance == Alliance.BLUE? Math.PI: 0;
-    }
-
     public double getFlyTime(Alliance alliance) {
         return nearFlyTime + (farFlyTime - nearFlyTime) / (farGoalDistance - nearGoalDistance)
                 * (Util.goalInRobotSys(getPose(), alliance).getMagnitude() - nearGoalDistance);
@@ -189,13 +179,20 @@ public class Drive extends SubsystemBase {
                 + od.getHeadingVelocity(UnnormalizedAngleUnit.RADIANS) * getFlyTime(alliance));
     }
 
+    public void setPose(Pose2D pose) {
+        od.setPosition(pose);
+    }
+
+    public void setYawOffset(double yawOffset) {
+        this.yawOffset = yawOffset;
+    }
+
     @Override
     public void periodic() {
         od.update();
         if (driveState == DriveState.STOP) {
             applyBrake();
         }
-        telemetry.addData("PolarVector", Util.goalInRobotSys(getPose(), alliance).toString());
         lastPose = getPose();
     }
 }

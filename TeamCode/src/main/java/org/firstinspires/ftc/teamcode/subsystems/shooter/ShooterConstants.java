@@ -10,9 +10,9 @@ public class ShooterConstants {
     public static String rightShooterName = "rightShooterMotor";
     public static String pitchServoName = "pitchServo";
 
-    public static double shooterEpsilon = 20;
+    public static double shooterEpsilon = 60;
 
-    public static double highPose = 1;
+    public static double highPose = 0.9;
     public static double middlePose = 0.5;
     public static double lowPose = 0;
 
@@ -22,8 +22,8 @@ public class ShooterConstants {
     public static double stopVelocity = 0;
     public static double fastVelocity = 1540; // 1520;
     public static double slowVelocity = 1300; // 1300;
-    public static double releaseVelocity = 1000;
-    public static double slowPower = 0.8;
-    public static double fastPower = 0.95;
-    public static PIDFCoefficients pidfCoefficients = new PIDFCoefficients(140, 0, 0, 18);
+    public static double kP = -140.0;
+    public static double kI = 0.0;
+    public static double kD = 0.0;
+    public static double kF = -18.0;
 }
