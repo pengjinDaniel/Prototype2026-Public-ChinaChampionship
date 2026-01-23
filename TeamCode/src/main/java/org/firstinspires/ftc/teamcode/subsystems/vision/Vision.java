@@ -20,14 +20,12 @@ import java.util.List;
 public class Vision extends SubsystemBase {
     private Limelight3A limelight;
     private Drive drive;
-    private boolean activated;
 
     public Vision(final HardwareMap hardwareMap, Drive drive) {
         limelight = hardwareMap.get(Limelight3A.class, VisionConstants.limelightName);
         limelight.setPollRateHz(VisionConstants.pollRateHz);
         limelight.start();
         this.drive = drive;
-        activated = false;
     }
 
     public void calibrate() {
@@ -40,7 +38,6 @@ public class Vision extends SubsystemBase {
             Pose2D pose = Util.visionPoseToDWPose(fiducialResults.get(0).getRobotPoseFieldSpace());
             drive.setPose(pose);
             drive.setYawOffset(drive.getAlliance() == Drive.Alliance.BLUE ? Math.PI : 0);
-            activated = true;
         }
     }
 

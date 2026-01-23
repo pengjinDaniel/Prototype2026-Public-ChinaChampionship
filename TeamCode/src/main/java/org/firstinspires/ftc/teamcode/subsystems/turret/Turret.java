@@ -70,6 +70,5 @@ public class Turret extends SubsystemBase {
             turretMotor.setPower(pidfController.calculate(
                     turretMotor.getCurrentPosition(), ticksSetpoint));
         }
-        telemetry.addData("TurretSetpoint", normalizedSetpoint);
     }
 }
