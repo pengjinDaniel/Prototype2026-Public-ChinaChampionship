@@ -31,7 +31,6 @@ public class Drive extends SubsystemBase {
     public final DcMotor leftFrontMotor, leftBackMotor, rightFrontMotor, rightBackMotor;
 
     private final GoBildaPinpointDriver od;
-    private final Vision autoApriltag;
     private double yawOffset;// mm
     private Alliance alliance;
     private DriveState driveState;
@@ -66,8 +65,6 @@ public class Drive extends SubsystemBase {
         leftBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        autoApriltag = new Vision(hardwareMap);
 
         od.resetPosAndIMU();
         od.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD,
@@ -190,9 +187,9 @@ public class Drive extends SubsystemBase {
     @Override
     public void periodic() {
         od.update();
-        if (driveState == DriveState.STOP) {
-            applyBrake();
-        }
+//        if (driveState == DriveState.STOP) {
+//            applyBrake();
+//        }
         lastPose = getPose();
     }
 }

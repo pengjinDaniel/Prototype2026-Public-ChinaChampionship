@@ -31,6 +31,7 @@ public class TeleOpDriveCommand extends CommandBase {
         }
         else {
             drive.setDriveState(Drive.DriveState.STOP);
+            drive.stop();
         }
     }
 }

@@ -13,15 +13,15 @@ public class ShooterConstants {
     public static double shooterEpsilon = 60;
 
     public static double highPose = 0.9;
-    public static double middlePose = 0.5;
+    public static double middlePose = 0.7;
     public static double lowPose = 0;
 
     /**
      * In Ticks Per Second
      */
     public static double stopVelocity = 0;
-    public static double fastVelocity = 1540; // 1520;
-    public static double slowVelocity = 1300; // 1300;
+    public static double fastVelocity = 1600; // 1520;
+    public static double slowVelocity = 1200; // 1300;
     public static double kP = -140.0;
     public static double kI = 0.0;
     public static double kD = 0.0;

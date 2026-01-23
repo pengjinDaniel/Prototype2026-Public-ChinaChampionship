@@ -1,10 +1,15 @@
 package org.firstinspires.ftc.teamcode.subsystems.vision;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.LLResultTypes.FiducialResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.subsystems.drive.Drive;
 import org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants;
@@ -14,22 +19,33 @@ import java.util.List;
 
 public class Vision extends SubsystemBase {
     private Limelight3A limelight;
+    private Drive drive;
+    private boolean activated;
 
-    public Vision(final HardwareMap hardwareMap) {
+    public Vision(final HardwareMap hardwareMap, Drive drive) {
         limelight = hardwareMap.get(Limelight3A.class, VisionConstants.limelightName);
         limelight.setPollRateHz(VisionConstants.pollRateHz);
         limelight.start();
+        this.drive = drive;
+        activated = false;
     }
 
-    /**
-     * @return robot position in the field (can be null if the limelight doesn't see anything)
-     */
-    public Pose3D getRobotPosition(){
-        List<FiducialResult> fiducialResult = limelight.getLatestResult().getFiducialResults();
-        if (!fiducialResult.isEmpty()
-                && fiducialResult.get(0).getTargetArea() >= VisionConstants.targetArea) {
-            return fiducialResult.get(0).getRobotPoseFieldSpace();
+    public void calibrate() {
+        List<LLResultTypes.FiducialResult> fiducialResults = limelight.getLatestResult().getFiducialResults();
+        if (fiducialResults != null &&
+                !fiducialResults.isEmpty() &&
+                fiducialResults.get(0).getRobotPoseFieldSpace() != null &&
+                (fiducialResults.get(0).getFiducialId() == 20 ||
+                        fiducialResults.get(0).getFiducialId() == 24)) {
+            Pose2D pose = Util.visionPoseToDWPose(fiducialResults.get(0).getRobotPoseFieldSpace());
+            drive.setPose(pose);
+            drive.setYawOffset(drive.getAlliance() == Drive.Alliance.BLUE ? Math.PI : 0);
+            activated = true;
         }
-        return null;
+    }
+
+    @Override
+    public void periodic() {
+        calibrate();
     }
 }

@@ -1,11 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleops;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
@@ -17,11 +12,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.commands.IntakeCommand;
-import org.firstinspires.ftc.teamcode.commands.ShooterAlignCommand;
 import org.firstinspires.ftc.teamcode.commands.TeleOpDriveCommand;
 import org.firstinspires.ftc.teamcode.commands.TransitCommand;
 import org.firstinspires.ftc.teamcode.commands.TurretAlignCommand;
-import org.firstinspires.ftc.teamcode.commands.VisionCalibrateCommand;
 import org.firstinspires.ftc.teamcode.subsystems.drive.Drive;
 import org.firstinspires.ftc.teamcode.subsystems.intake.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.shooter.Shooter;
@@ -44,6 +37,7 @@ public abstract class TeleOpBase extends CommandOpMode {
     public Turret turret;
     public Vision vision;
     public ElapsedTime timer;
+    public boolean autoCalibrate = false;
 
     protected abstract Drive.Alliance getAlliance();
 
@@ -56,7 +50,7 @@ public abstract class TeleOpBase extends CommandOpMode {
         intake = new Intake(hardwareMap);
         timer = new ElapsedTime();
         turret = new Turret(hardwareMap, telemetry);
-        vision = new Vision(hardwareMap);
+        vision = new Vision(hardwareMap, drive);
         timer.reset();
 
         new FunctionalButton(
@@ -70,12 +64,6 @@ public abstract class TeleOpBase extends CommandOpMode {
                 () -> gamepadEx1.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)));
 //        shooter.setDefaultCommand(new ShooterAlignCommand(drive, shooter, getAlliance(),
 //                () -> gamepadEx1.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)));
-
-        new FunctionalButton(
-                () -> gamepadEx1.getButton(GamepadKeys.Button.B)
-        ).whenPressed(
-                new VisionCalibrateCommand(drive, vision)
-        );
 
         new FunctionalButton(
                 () -> gamepadEx1.getButton(GamepadKeys.Button.LEFT_STICK_BUTTON)
@@ -124,7 +112,6 @@ public abstract class TeleOpBase extends CommandOpMode {
         telemetry.addData("Drive Heading: ", drive.getPose().getHeading(AngleUnit.RADIANS));
         telemetry.addData("Drive YawOffset: ",drive.getYawOffset());
         telemetry.addData("Drive PolarVector: ", Util.goalInRobotSys(drive.getPose(), drive.getAlliance()));
-        telemetry.addData("Drive Vision Pose: ", vision.getRobotPosition() != null ? vision.getRobotPosition() : "null");
 
         // Shooter
         telemetry.addData("Shooter State: ", shooter.getShooterState());
