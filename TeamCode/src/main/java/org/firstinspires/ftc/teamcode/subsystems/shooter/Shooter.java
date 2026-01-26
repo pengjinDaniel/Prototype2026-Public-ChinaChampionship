@@ -25,6 +25,7 @@ public class Shooter extends SubsystemBase {
     private Servo pitchServo;
 
     private ShooterState shooterState = ShooterState.STOP;
+    private PitchState pitchState = PitchState.LOW;
 
     public double dynamicSpeed;
 
@@ -36,8 +37,6 @@ public class Shooter extends SubsystemBase {
         leftShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightShooter.setVelocityPIDFCoefficients(kP, kI, kD, kF);
         leftShooter.setVelocityPIDFCoefficients(kP, kI, kD, kF);
-
-        pitchServo.setPosition(PitchState.LOW.servoPos);
     }
 
     public enum ShooterState {
@@ -74,7 +73,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public void setPitchState(PitchState pitchState) {
-        pitchServo.setPosition(pitchState.servoPos);
+        this.pitchState = pitchState;
     }
 
     public ShooterState getShooterState() {
@@ -108,6 +107,7 @@ public class Shooter extends SubsystemBase {
             if (shooterState == ShooterState.FAST) {
                 setPitchState(PitchState.HIGH);
             }
+            pitchServo.setPosition(pitchState.servoPos);
         }
         else {
             rightShooter.setVelocity(dynamicSpeed);

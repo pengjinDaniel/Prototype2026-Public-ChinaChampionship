@@ -8,7 +8,6 @@ import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.nea
 import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.redGoalPose;
 
 import com.pedropathing.geometry.Pose;
-import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -17,9 +16,19 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.subsystems.drive.Drive;
 import org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants;
-import org.opencv.core.Mat;
 
 public class Util {
+    public static Pose Pose2DToPose(Pose2D pose2D) {
+        return new Pose(pose2D.getX(DriveConstants.distanceUnit),
+                pose2D.getY(DriveConstants.distanceUnit),
+                pose2D.getHeading(DriveConstants.angleUnit));
+    }
+
+    public static Pose2D PoseToPose2D(Pose pose) {
+        return new Pose2D(distanceUnit, pose.getX(), pose.getY(),
+                angleUnit, pose.getHeading());
+    }
+
     public static boolean epsilonEqual(double a, double b, double epsilon) {
         return Math.abs(a - b) <= epsilon;
     }

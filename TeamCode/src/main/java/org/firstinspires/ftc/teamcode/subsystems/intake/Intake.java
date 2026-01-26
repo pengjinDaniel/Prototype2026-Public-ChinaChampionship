@@ -8,29 +8,36 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Intake extends SubsystemBase {
     private final DcMotor intakeMotor;
-    private boolean isRunning;
+    public IntakeState intakeState;
+
+    public enum IntakeState {
+        STOP(0),
+        FORWARD(IntakeConstants.intakePower),
+        REVERSED(-IntakeConstants.intakePower);
+
+        public double power;
+
+        IntakeState(double power) {
+            this.power = power;
+        }
+    }
 
     public Intake(HardwareMap hardwareMap) {
         this.intakeMotor = hardwareMap.get(DcMotor.class, IntakeConstants.intakeMotorName);
         this.intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        this.isRunning = false;
+        this.intakeState = IntakeState.STOP;
     }
 
-    public void setRunning(boolean isRunning) {
-        this.isRunning = isRunning;
+    public void setIntakeState(IntakeState intakeState) {
+        this.intakeState = intakeState;
     }
 
-    public boolean isRunning() {
-        return isRunning;
+    public IntakeState getIntakeState() {
+        return this.intakeState;
     }
 
     @Override
     public void periodic() {
-        if (isRunning) {
-            intakeMotor.setPower(IntakeConstants.intakePower);
-        }
-        else {
-            intakeMotor.setPower(0);
-        }
+        intakeMotor.setPower(intakeState.power);
     }
 }

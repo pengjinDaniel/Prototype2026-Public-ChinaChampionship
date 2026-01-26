@@ -5,13 +5,11 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 
 import org.firstinspires.ftc.teamcode.subsystems.drive.Drive;
 
-import java.util.function.BooleanSupplier;
-
-public class TeleOpDriveCommand extends CommandBase {
+public class DriveCommand extends CommandBase {
     private final Drive drive;
     private final GamepadEx gamepadEx;
 
-    public TeleOpDriveCommand(Drive drive, GamepadEx gamepadEx) {
+    public DriveCommand(Drive drive, GamepadEx gamepadEx) {
         this.drive = drive;
         this.gamepadEx = gamepadEx;
         addRequirements(drive);

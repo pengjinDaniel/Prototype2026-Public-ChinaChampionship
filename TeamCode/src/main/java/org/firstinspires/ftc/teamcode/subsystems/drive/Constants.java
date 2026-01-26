@@ -25,9 +25,9 @@ public class Constants {
             .useSecondaryHeadingPIDF(false)
             .useSecondaryDrivePIDF(false)
             .translationalPIDFCoefficients(new PIDFCoefficients(0.1, 0.0, 0.01, 0.03))
-            .headingPIDFCoefficients(new PIDFCoefficients(0.8, 0, 0.02, 0.03))
-            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.01, 0, 0.0001, 0, 0.001))
-            .centripetalScaling(0.0004);
+            .headingPIDFCoefficients(new PIDFCoefficients(0.95, 0, 0.032, 0.025))
+            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.01, 0, 0.0003, 0, 0.001))
+            .centripetalScaling(0.00037);
 
 
     public static MecanumConstants driveConstants = new MecanumConstants()
@@ -58,7 +58,7 @@ public class Constants {
             .hardwareMapName("od")
             .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
             .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
-            .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED);
+            .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
     /**
      These are the PathConstraints in order:
      tValueConstraint, velocityConstraint, translationalConstraint, headingConstraint, timeoutConstraint,

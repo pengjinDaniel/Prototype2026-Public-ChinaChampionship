@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.bylazar.configurables.annotations.Configurable;
@@ -12,9 +13,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.commands.IntakeCommand;
-import org.firstinspires.ftc.teamcode.commands.TeleOpDriveCommand;
+import org.firstinspires.ftc.teamcode.commands.DriveCommand;
 import org.firstinspires.ftc.teamcode.commands.TransitCommand;
 import org.firstinspires.ftc.teamcode.commands.TurretAlignCommand;
+import org.firstinspires.ftc.teamcode.commands.CalibrateCommand;
 import org.firstinspires.ftc.teamcode.subsystems.drive.Drive;
 import org.firstinspires.ftc.teamcode.subsystems.intake.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.shooter.Shooter;
@@ -49,8 +51,8 @@ public abstract class TeleOpBase extends CommandOpMode {
         transit = new Transit(hardwareMap);
         intake = new Intake(hardwareMap);
         timer = new ElapsedTime();
-        turret = new Turret(hardwareMap, telemetry);
-        vision = new Vision(hardwareMap, drive);
+        turret = new Turret(hardwareMap);
+        vision = new Vision(hardwareMap);
         timer.reset();
 
         new FunctionalButton(
@@ -59,9 +61,9 @@ public abstract class TeleOpBase extends CommandOpMode {
                 new InstantCommand(() -> gamepad1.rumble(1.0, 1.0, 800))
         );
 
-        drive.setDefaultCommand(new TeleOpDriveCommand(drive, gamepadEx1));
-        turret.setDefaultCommand(new TurretAlignCommand(drive, turret, getAlliance(),
-                () -> gamepadEx1.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)));
+        drive.setDefaultCommand(new DriveCommand(drive, gamepadEx1));
+        turret.setDefaultCommand(new TurretAlignCommand(drive, turret, getAlliance(), () -> false));
+        vision.setDefaultCommand(new CalibrateCommand(vision, drive));
 //        shooter.setDefaultCommand(new ShooterAlignCommand(drive, shooter, getAlliance(),
 //                () -> gamepadEx1.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)));
 
@@ -74,31 +76,35 @@ public abstract class TeleOpBase extends CommandOpMode {
         new FunctionalButton(
                 () -> gamepadEx1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) >= 0.5
         ).whenHeld(
-                new InstantCommand(() -> transit.setState(Transit.TransitState.CLOSE))
-                        .andThen(new IntakeCommand(intake))
-
+                new IntakeCommand(intake, transit)
         );
 
         new FunctionalButton(
                 () -> gamepadEx1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) >= 0.5
         ).whenHeld(
-                new TransitCommand(shooter, transit, intake)
-        );
+                new TransitCommand(shooter, transit)
+                        .andThen(new WaitCommand(200))
+                        .andThen(new InstantCommand(() -> intake.setIntakeState(Intake.IntakeState.FORWARD)))
+        ).whenReleased(new InstantCommand(() -> intake.setIntakeState(Intake.IntakeState.STOP)));
 
         new FunctionalButton(
                 () -> gamepadEx1.getButton(GamepadKeys.Button.LEFT_BUMPER)
         ).whenPressed(
                 new InstantCommand(() -> shooter.setShooterState(Shooter.ShooterState.SLOW))
-        ).whenReleased(
-                new InstantCommand(() -> shooter.setShooterState(Shooter.ShooterState.STOP))
         );
 
         new FunctionalButton(
                 () -> gamepadEx1.getButton(GamepadKeys.Button.RIGHT_BUMPER)
         ).whenPressed(
                 new InstantCommand(() -> shooter.setShooterState(Shooter.ShooterState.FAST))
+        );
+
+        new FunctionalButton(
+                () -> gamepadEx1.getButton(GamepadKeys.Button.DPAD_DOWN)
+        ).whenPressed(
+                new InstantCommand(() -> intake.setIntakeState(Intake.IntakeState.REVERSED))
         ).whenReleased(
-                new InstantCommand(() -> shooter.setShooterState(Shooter.ShooterState.STOP))
+                new InstantCommand(() -> intake.setIntakeState(Intake.IntakeState.STOP))
         );
     }
 

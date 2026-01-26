@@ -40,10 +40,10 @@ public class AutoDriveCommand extends CommandBase {
         follower.update();
     }
 
-    @Override
-    public void end(boolean interrupted) {
-        follower.breakFollowing();
-    }
+//    @Override
+//    public void end(boolean interrupted) {
+//        follower.breakFollowing();
+//    }
 
     @Override
     public boolean isFinished() {

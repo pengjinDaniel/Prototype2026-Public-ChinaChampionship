@@ -16,16 +16,14 @@ public class Turret extends SubsystemBase {
     private DcMotor turretMotor;
     private int ticksSetpoint; // In ticks
     private double normalizedSetpoint; // In the range [-PI, PI]
-    private Telemetry telemetry;
 
-    public Turret(HardwareMap hardwareMap, Telemetry telemetry) {
+    public Turret(HardwareMap hardwareMap) {
         this.turretMotor = hardwareMap.get(DcMotor.class, TurretConstants.turretMotorName);
         this.pidfController = new PIDFController(
                 TurretConstants.kP, TurretConstants.kI, TurretConstants.kD, TurretConstants.kF
         );
         this.turretState = TurretState.INIT;
         normalizedSetpoint = TurretConstants.initPos;
-        this.telemetry = telemetry;
     }
 
     public enum TurretState {
@@ -55,10 +53,10 @@ public class Turret extends SubsystemBase {
     public void periodic() {
         if (Math.abs(normalizedSetpoint - Units.ticksToRadians(
                 turretMotor.getCurrentPosition())) > Math.PI) {
-            if (normalizedSetpoint + Math.PI < TurretConstants.rangeEpsilon) {
+            if (normalizedSetpoint < TurretConstants.rangeEpsilon - Math.PI + TurretConstants.offset) {
                 ticksSetpoint = Units.radiansToTicks(normalizedSetpoint + 2 * Math.PI);
             }
-            else if (normalizedSetpoint - Math.PI > TurretConstants.rangeEpsilon) {
+            else if (normalizedSetpoint > TurretConstants.rangeEpsilon + Math.PI + TurretConstants.offset) {
                 ticksSetpoint = Units.radiansToTicks(normalizedSetpoint - 2 * Math.PI);
             }
             else ticksSetpoint = Units.radiansToTicks(normalizedSetpoint);

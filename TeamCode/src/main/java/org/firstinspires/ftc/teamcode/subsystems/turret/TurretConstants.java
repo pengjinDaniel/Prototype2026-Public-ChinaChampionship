@@ -11,4 +11,6 @@ public class TurretConstants {
     public static double kF = 0;
     public static double rangeEpsilon = Units.degreesToRadians(40);
     public static double alignEpsilon = 100;
+
+    public static double offset = 0;
 }
