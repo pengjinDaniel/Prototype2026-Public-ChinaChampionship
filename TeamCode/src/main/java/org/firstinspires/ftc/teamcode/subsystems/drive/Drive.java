@@ -165,7 +165,7 @@ public class Drive extends SubsystemBase {
 
     public double getFlyTime(Alliance alliance) {
         return nearFlyTime + (farFlyTime - nearFlyTime) / (farGoalDistance - nearGoalDistance)
-                * (Util.goalInRobotSys(getPose(), alliance).getMagnitude() - nearGoalDistance);
+                * (Util.goalInTurretSys(getPose(), alliance).getMagnitude() - nearGoalDistance);
     }
 
     public Pose2D getExpectedPose(Alliance alliance) {

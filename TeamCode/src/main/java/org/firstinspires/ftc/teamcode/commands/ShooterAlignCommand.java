@@ -36,12 +36,12 @@ public class ShooterAlignCommand extends CommandBase {
     public void execute() {
         if (killButton.getAsBoolean()) isAlign = !isAlign;
         if (isAlign) {
-            PolarVector goalInRobotSys = Util.goalInRobotSys(drive.getPose(), alliance);
-            shooter.setDynamicSpeed(Util.getShooterVelocity(goalInRobotSys));
-            if (goalInRobotSys.getMagnitude() > DriveConstants.nearGoalDistance + 30) {
+            PolarVector goalInTurretSys = Util.goalInTurretSys(drive.getPose(), alliance);
+            shooter.setDynamicSpeed(Util.getShooterVelocity(goalInTurretSys));
+            if (goalInTurretSys.getMagnitude() > DriveConstants.nearGoalDistance + 30) {
                 shooter.setPitchState(Shooter.PitchState.HIGH);
             }
-            else if (goalInRobotSys.getMagnitude() < 30) {
+            else if (goalInTurretSys.getMagnitude() < 30) {
                 shooter.setPitchState(Shooter.PitchState.LOW);
             }
             else {

@@ -16,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.subsystems.drive.Drive;
 import org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants;
+import org.firstinspires.ftc.teamcode.subsystems.turret.TurretConstants;
 
 public class Util {
     public static Pose Pose2DToPose(Pose2D pose2D) {
@@ -56,12 +57,20 @@ public class Util {
         return rad;
     }
 
-    public static PolarVector goalInRobotSys(Pose2D drivePose, Drive.Alliance alliance) {
+    public static PolarVector goalInTurretSys(Pose2D drivePose, Drive.Alliance alliance) {
+        Pose2D turretPose = new Pose2D(
+                distanceUnit,
+                drivePose.getX(distanceUnit) + Math.cos(drivePose.getHeading(angleUnit)) * TurretConstants.offsetToRobot,
+                drivePose.getY(distanceUnit) + Math.sin(drivePose.getHeading(angleUnit)) * TurretConstants.offsetToRobot,
+                angleUnit,
+                drivePose.getHeading(angleUnit)
+        );
+
         Pose2D goalPose = alliance == Drive.Alliance.BLUE? blueGoalPose: redGoalPose;
         double cos_h = Math.cos(drivePose.getHeading(AngleUnit.RADIANS));
         double sin_h = Math.sin(drivePose.getHeading(AngleUnit.RADIANS));
-        double dx = goalPose.getX(distanceUnit) - drivePose.getX(distanceUnit);
-        double dy = goalPose.getY(distanceUnit) - drivePose.getY(distanceUnit);
+        double dx = goalPose.getX(distanceUnit) - turretPose.getX(distanceUnit);
+        double dy = goalPose.getY(distanceUnit) - turretPose.getY(distanceUnit);
         return new PolarVector(DistanceUnit.INCH, dx * cos_h + dy * sin_h, -dx * sin_h + dy * cos_h);
     }
 

@@ -117,7 +117,7 @@ public abstract class TeleOpBase extends CommandOpMode {
         telemetry.addData("Drive Y: ",  drive.getPose().getY(DistanceUnit.INCH));
         telemetry.addData("Drive Heading: ", drive.getPose().getHeading(AngleUnit.RADIANS));
         telemetry.addData("Drive YawOffset: ",drive.getYawOffset());
-        telemetry.addData("Drive PolarVector: ", Util.goalInRobotSys(drive.getPose(), drive.getAlliance()));
+        telemetry.addData("Turret PolarVector: ", Util.goalInTurretSys(drive.getPose(), drive.getAlliance()));
 
         // Shooter
         telemetry.addData("Shooter State: ", shooter.getShooterState());

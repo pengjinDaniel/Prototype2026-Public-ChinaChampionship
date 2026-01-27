@@ -16,7 +16,7 @@ public class DriveConstants {
     public static String rightBackMotorName = "rightBackMotor";
     public static String odName = "od";
 
-    public static double xPoseDW = Units.mmToInches(-156.606), yPoseDW = Units.mmToInches(24.682);
+    public static double xPoseDW = Units.mmToInches(-163), yPoseDW = Units.mmToInches(24.682);
 
     public static double strafingBalance = 1.1;
     public static double headingEpsilon = 0.1;
@@ -37,7 +37,7 @@ public class DriveConstants {
     public static double xNearPoseBlue = 5, yNearPoseBlue = 140;
     public static double xFarPoseRed = 137, yFarPoseRed = 140;
     public static double xFarPoseBlue = 7, yFarPoseBlue = 140;
-    public static Pose2D blueGoalPose = new Pose2D(distanceUnit, 14.5, 126, angleUnit, 0);
+    public static Pose2D blueGoalPose = new Pose2D(distanceUnit, 12.3, 135.3, angleUnit, 0);
     public static Pose2D redGoalPose = new Pose2D(distanceUnit, 144 - 14.5, 126, angleUnit, 0);
 
     //86 24, 60 86

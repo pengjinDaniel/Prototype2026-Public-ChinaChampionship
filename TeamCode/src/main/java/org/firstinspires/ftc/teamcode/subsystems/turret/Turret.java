@@ -56,7 +56,7 @@ public class Turret extends SubsystemBase {
             if (normalizedSetpoint < TurretConstants.rangeEpsilon - Math.PI + TurretConstants.offset) {
                 ticksSetpoint = Units.radiansToTicks(normalizedSetpoint + 2 * Math.PI);
             }
-            else if (normalizedSetpoint > TurretConstants.rangeEpsilon + Math.PI + TurretConstants.offset) {
+            else if (normalizedSetpoint > -TurretConstants.rangeEpsilon + Math.PI + TurretConstants.offset) {
                 ticksSetpoint = Units.radiansToTicks(normalizedSetpoint - 2 * Math.PI);
             }
             else ticksSetpoint = Units.radiansToTicks(normalizedSetpoint);
