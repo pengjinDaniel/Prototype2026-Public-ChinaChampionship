@@ -14,16 +14,16 @@ public class ShooterAlignCommand extends CommandBase {
     private Drive drive;
     private Shooter shooter;
     private Drive.Alliance alliance;
-    private Boolean isAlign;
     private BooleanSupplier killButton;
+    private boolean isAlign;
 
     public ShooterAlignCommand(Drive drive, Shooter shooter, Drive.Alliance alliance,
                                BooleanSupplier killButton) {
         this.drive = drive;
         this.shooter = shooter;
         this.alliance = alliance;
-        this.isAlign = true;
         this.killButton = killButton;
+        isAlign = true;
         addRequirements(shooter);
     }
 
@@ -35,7 +35,7 @@ public class ShooterAlignCommand extends CommandBase {
     @Override
     public void execute() {
         if (killButton.getAsBoolean()) isAlign = !isAlign;
-        if (isAlign) {
+        if (isAlign && drive.getAligned()) {
             PolarVector goalInTurretSys = Util.goalInTurretSys(drive.getPose(), alliance);
             shooter.setDynamicSpeed(Util.getShooterVelocity(goalInTurretSys));
             if (goalInTurretSys.getMagnitude() > DriveConstants.nearGoalDistance + 30) {

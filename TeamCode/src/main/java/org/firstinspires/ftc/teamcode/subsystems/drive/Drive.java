@@ -35,6 +35,7 @@ public class Drive extends SubsystemBase {
     private Alliance alliance;
     private DriveState driveState;
     private Telemetry telemetry;
+    private boolean aligned;
 
     Pose2D lastPose;
 
@@ -78,6 +79,7 @@ public class Drive extends SubsystemBase {
         leftBackMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         lastPose = new Pose2D(DriveConstants.distanceUnit, 0, 0, DriveConstants.angleUnit, 0);
+        aligned = false;
     }
 
     public void stop() {
@@ -86,6 +88,14 @@ public class Drive extends SubsystemBase {
 
     public void reset(double heading) {
         yawOffset = od.getPosition().getHeading(DriveConstants.angleUnit) + heading;
+    }
+
+    public void setAligned(boolean aligned) {
+        this.aligned = aligned;
+    }
+
+    public boolean getAligned() {
+        return aligned;
     }
 
     public Alliance getAlliance() {

@@ -43,6 +43,7 @@ public class Vision extends SubsystemBase {
         Pose2D pose = Util.visionPoseToDWPose(fiducialResult.getRobotPoseFieldSpace());
         drive.setPose(pose);
         drive.setYawOffset(drive.getAlliance() == Drive.Alliance.BLUE ? Math.PI : 0);
+        drive.setAligned(true);
     }
 
     public void autoCalibrate(Follower follower) {

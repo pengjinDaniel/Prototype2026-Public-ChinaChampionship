@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleops;
 
+import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.distanceUnit;
+import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.nearGoalDistance;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
@@ -14,6 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.DriveCommand;
+import org.firstinspires.ftc.teamcode.commands.ShooterAlignCommand;
 import org.firstinspires.ftc.teamcode.commands.TransitCommand;
 import org.firstinspires.ftc.teamcode.commands.TurretAlignCommand;
 import org.firstinspires.ftc.teamcode.commands.CalibrateCommand;
@@ -64,8 +68,7 @@ public abstract class TeleOpBase extends CommandOpMode {
         drive.setDefaultCommand(new DriveCommand(drive, gamepadEx1));
         turret.setDefaultCommand(new TurretAlignCommand(drive, turret, getAlliance(), () -> false));
         vision.setDefaultCommand(new CalibrateCommand(vision, drive));
-//        shooter.setDefaultCommand(new ShooterAlignCommand(drive, shooter, getAlliance(),
-//                () -> gamepadEx1.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)));
+        shooter.setDefaultCommand(new ShooterAlignCommand(drive, shooter, getAlliance(), () -> false));
 
         new FunctionalButton(
                 () -> gamepadEx1.getButton(GamepadKeys.Button.LEFT_STICK_BUTTON)
@@ -112,18 +115,24 @@ public abstract class TeleOpBase extends CommandOpMode {
     public void run() {
         CommandScheduler.getInstance().run();
 
-        // Drive
+        telemetry.addLine("----- Drive -----");
         telemetry.addData("Drive X: ", drive.getPose().getX(DistanceUnit.INCH));
         telemetry.addData("Drive Y: ",  drive.getPose().getY(DistanceUnit.INCH));
         telemetry.addData("Drive Heading: ", drive.getPose().getHeading(AngleUnit.RADIANS));
-        telemetry.addData("Drive YawOffset: ",drive.getYawOffset());
-        telemetry.addData("Turret PolarVector: ", Util.goalInTurretSys(drive.getPose(), drive.getAlliance()));
+        telemetry.addData("Drive Aligned: ", drive.getAligned());
 
-        // Shooter
+        telemetry.addLine("----- Shooter -----");
         telemetry.addData("Shooter State: ", shooter.getShooterState());
         telemetry.addData("Shooter Target: ", shooter.getShooterState().getShooterVelocity());
         telemetry.addData("Shooter Speed: ", shooter.getVelocity());
         telemetry.addData("Shooter at SetPoint: ", shooter.isShooterAtSetPoint());
+
+        telemetry.addLine("----- Turret -----");
+        telemetry.addData("Turret X: ", Util.drivePoseToTurretPose(drive.getPose()).getX(distanceUnit));
+        telemetry.addData("Turret Y: ", Util.drivePoseToTurretPose(drive.getPose()).getY(distanceUnit));
+
+        telemetry.addLine("----- Constants -----");
+        telemetry.addData("nearGoalDistance: ", nearGoalDistance);
 
         telemetry.update();
     }

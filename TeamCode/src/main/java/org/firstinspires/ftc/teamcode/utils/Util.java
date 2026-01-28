@@ -57,16 +57,19 @@ public class Util {
         return rad;
     }
 
-    public static PolarVector goalInTurretSys(Pose2D drivePose, Drive.Alliance alliance) {
-        Pose2D turretPose = new Pose2D(
+    public static Pose2D drivePoseToTurretPose(Pose2D drivePose) {
+        return new Pose2D(
                 distanceUnit,
                 drivePose.getX(distanceUnit) + Math.cos(drivePose.getHeading(angleUnit)) * TurretConstants.offsetToRobot,
                 drivePose.getY(distanceUnit) + Math.sin(drivePose.getHeading(angleUnit)) * TurretConstants.offsetToRobot,
                 angleUnit,
                 drivePose.getHeading(angleUnit)
         );
+    }
 
-        Pose2D goalPose = alliance == Drive.Alliance.BLUE? blueGoalPose: redGoalPose;
+    public static PolarVector goalInTurretSys(Pose2D drivePose, Drive.Alliance alliance) {
+        Pose2D goalPose = alliance == Drive.Alliance.BLUE ? blueGoalPose : redGoalPose;
+        Pose2D turretPose = drivePoseToTurretPose(drivePose);
         double cos_h = Math.cos(drivePose.getHeading(AngleUnit.RADIANS));
         double sin_h = Math.sin(drivePose.getHeading(AngleUnit.RADIANS));
         double dx = goalPose.getX(distanceUnit) - turretPose.getX(distanceUnit);
@@ -74,8 +77,8 @@ public class Util {
         return new PolarVector(DistanceUnit.INCH, dx * cos_h + dy * sin_h, -dx * sin_h + dy * cos_h);
     }
 
-    public static double getShooterVelocity(PolarVector goalToRobot) {
-        double distanceToGoal = goalToRobot.magnitude;
+    public static double getShooterVelocity(PolarVector goalToTurret) {
+        double distanceToGoal = goalToTurret.magnitude;
         if (distanceToGoal != -1) {
             double normalizedDistance = (distanceToGoal - nearGoalDistance) / (farGoalDistance - nearGoalDistance);
 

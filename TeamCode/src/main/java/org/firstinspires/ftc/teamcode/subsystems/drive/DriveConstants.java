@@ -33,20 +33,46 @@ public class DriveConstants {
     public static double kD_alignH = -0.01;
     public static double kF_alignH = -0.03;
 
-    public static double xNearPoseRed = 139, yNearPoseRed = 140;
-    public static double xNearPoseBlue = 5, yNearPoseBlue = 140;
+    public static double xNearPoseRed = 89, yNearPoseRed = 87;
+    public static double xNearPoseBlue = 57, yNearPoseBlue = 92;
     public static double xFarPoseRed = 137, yFarPoseRed = 140;
-    public static double xFarPoseBlue = 7, yFarPoseBlue = 140;
+    public static double xFarPoseBlue = 71, yFarPoseBlue = 15;
     public static Pose2D blueGoalPose = new Pose2D(distanceUnit, 12.3, 135.3, angleUnit, 0);
-    public static Pose2D redGoalPose = new Pose2D(distanceUnit, 144 - 14.5, 126, angleUnit, 0);
+    public static Pose2D redGoalPose = new Pose2D(distanceUnit, 131.2, 134.7, angleUnit, 0);
 
     //86 24, 60 86
-    public static double nearGoalDistance = Util.poseDistance(new Pose2D(DistanceUnit.INCH, 60,
-            86, AngleUnit.RADIANS, 0), new Pose2D(DistanceUnit.INCH, xNearPoseBlue,
-            yNearPoseBlue, AngleUnit.RADIANS, 0));
-    public static double farGoalDistance = Util.poseDistance(new Pose2D(DistanceUnit.INCH, 86,
-            24, AngleUnit.RADIANS, 0), new Pose2D(DistanceUnit.INCH, xFarPoseBlue,
-            yFarPoseBlue, AngleUnit.RADIANS, 0));
+    public static double nearGoalDistance =
+            Util.poseDistance(
+                    new Pose2D(DistanceUnit.INCH,
+                            blueGoalPose.getX(distanceUnit),
+                            blueGoalPose.getY(distanceUnit), AngleUnit.RADIANS,
+                            0
+                    ),
+                    new Pose2D(DistanceUnit.INCH,
+                            xNearPoseBlue,
+                            yNearPoseBlue,
+                            AngleUnit.RADIANS,
+                            0
+                    )
+            );
+
+    public static double farGoalDistance =
+            Util.poseDistance(
+                    new Pose2D(DistanceUnit.INCH,
+                            blueGoalPose.getX(distanceUnit),
+                            blueGoalPose.getY(distanceUnit),
+                            AngleUnit.RADIANS,
+                            0
+                    ),
+                    new Pose2D(
+                            DistanceUnit.INCH,
+                            xFarPoseBlue,
+                            yFarPoseBlue,
+                            AngleUnit.RADIANS,
+                            0
+                    )
+            );
+
     public static double nearFlyTime = 0;
     public static double farFlyTime = 0;
 
