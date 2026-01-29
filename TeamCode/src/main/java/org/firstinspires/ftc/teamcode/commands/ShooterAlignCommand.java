@@ -38,18 +38,15 @@ public class ShooterAlignCommand extends CommandBase {
         if (isAlign && drive.getAligned()) {
             PolarVector goalInTurretSys = Util.goalInTurretSys(drive.getPose(), alliance);
             shooter.setDynamicSpeed(Util.getShooterVelocity(goalInTurretSys));
-            if (goalInTurretSys.getMagnitude() > DriveConstants.nearGoalDistance + 30) {
+            if (goalInTurretSys.getMagnitude() > 100) {
                 shooter.setPitchState(Shooter.PitchState.HIGH);
             }
-            else if (goalInTurretSys.getMagnitude() < 30) {
+            else if (goalInTurretSys.getMagnitude() < 46) {
                 shooter.setPitchState(Shooter.PitchState.LOW);
             }
-            else {
+            else if (goalInTurretSys.getMagnitude() > 46.6) {
                 shooter.setPitchState(Shooter.PitchState.MIDDLE);
             }
-        }
-        else {
-            shooter.setShooterState(Shooter.ShooterState.SLOW);
         }
     }
 }

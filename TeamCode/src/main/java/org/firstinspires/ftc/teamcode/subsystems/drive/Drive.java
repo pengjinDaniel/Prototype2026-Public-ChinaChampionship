@@ -52,14 +52,13 @@ public class Drive extends SubsystemBase {
         Alliance() {}
     }
 
-    public Drive(final HardwareMap hardwareMap, Alliance alliance, Telemetry telemetry) {
+    public Drive(final HardwareMap hardwareMap, Alliance alliance) {
         leftFrontMotor = hardwareMap.get(DcMotor.class, DriveConstants.leftFrontMotorName);
         leftBackMotor = hardwareMap.get(DcMotor.class, DriveConstants.leftBackMotorName);
         rightFrontMotor = hardwareMap.get(DcMotor.class, DriveConstants.rightFrontMotorName);
         rightBackMotor = hardwareMap.get(DcMotor.class, DriveConstants.rightBackMotorName);
         od = hardwareMap.get(GoBildaPinpointDriver.class, DriveConstants.odName);
         driveState = DriveState.STOP;
-        this.telemetry = telemetry;
         this.alliance = alliance;
 
         leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

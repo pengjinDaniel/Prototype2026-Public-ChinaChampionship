@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleops;
 
+import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.angleUnit;
 import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.distanceUnit;
 import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.nearGoalDistance;
 
@@ -20,7 +21,6 @@ import org.firstinspires.ftc.teamcode.commands.DriveCommand;
 import org.firstinspires.ftc.teamcode.commands.ShooterAlignCommand;
 import org.firstinspires.ftc.teamcode.commands.TransitCommand;
 import org.firstinspires.ftc.teamcode.commands.TurretAlignCommand;
-import org.firstinspires.ftc.teamcode.commands.CalibrateCommand;
 import org.firstinspires.ftc.teamcode.subsystems.drive.Drive;
 import org.firstinspires.ftc.teamcode.subsystems.intake.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.shooter.Shooter;
@@ -43,13 +43,13 @@ public abstract class TeleOpBase extends CommandOpMode {
     public Turret turret;
     public Vision vision;
     public ElapsedTime timer;
-    public boolean autoCalibrate = false;
+    public boolean aligning = false;
 
     protected abstract Drive.Alliance getAlliance();
 
     @Override
     public void initialize() {
-        drive = new Drive(hardwareMap, getAlliance(), telemetry);
+        drive = new Drive(hardwareMap, getAlliance());
         gamepadEx1 = new GamepadEx(gamepad1);
         shooter = new Shooter(hardwareMap);
         transit = new Transit(hardwareMap);
@@ -67,7 +67,6 @@ public abstract class TeleOpBase extends CommandOpMode {
 
         drive.setDefaultCommand(new DriveCommand(drive, gamepadEx1));
         turret.setDefaultCommand(new TurretAlignCommand(drive, turret, getAlliance(), () -> false));
-        vision.setDefaultCommand(new CalibrateCommand(vision, drive));
         shooter.setDefaultCommand(new ShooterAlignCommand(drive, shooter, getAlliance(), () -> false));
 
         new FunctionalButton(
@@ -114,12 +113,19 @@ public abstract class TeleOpBase extends CommandOpMode {
     @Override
     public void run() {
         CommandScheduler.getInstance().run();
+        aligning = vision.calibrate(drive);
 
         telemetry.addLine("----- Drive -----");
-        telemetry.addData("Drive X: ", drive.getPose().getX(DistanceUnit.INCH));
-        telemetry.addData("Drive Y: ",  drive.getPose().getY(DistanceUnit.INCH));
-        telemetry.addData("Drive Heading: ", drive.getPose().getHeading(AngleUnit.RADIANS));
+        telemetry.addData("Drive X: ", drive.getPose().getX(distanceUnit));
+        telemetry.addData("Drive Y: ",  drive.getPose().getY(distanceUnit));
+        telemetry.addData("Drive H: ", drive.getPose().getHeading(angleUnit));
         telemetry.addData("Drive Aligned: ", drive.getAligned());
+        telemetry.addData("Aligning: ", aligning);
+
+        telemetry.addLine("----- Vision -----");
+        telemetry.addData("Vision X: ", vision.getVisionPose().getX(distanceUnit));
+        telemetry.addData("Vision Y: ", vision.getVisionPose().getY(distanceUnit));
+        telemetry.addData("Vision H: ", vision.getVisionPose().getHeading(angleUnit));
 
         telemetry.addLine("----- Shooter -----");
         telemetry.addData("Shooter State: ", shooter.getShooterState());
@@ -130,9 +136,7 @@ public abstract class TeleOpBase extends CommandOpMode {
         telemetry.addLine("----- Turret -----");
         telemetry.addData("Turret X: ", Util.drivePoseToTurretPose(drive.getPose()).getX(distanceUnit));
         telemetry.addData("Turret Y: ", Util.drivePoseToTurretPose(drive.getPose()).getY(distanceUnit));
-
-        telemetry.addLine("----- Constants -----");
-        telemetry.addData("nearGoalDistance: ", nearGoalDistance);
+        telemetry.addData("Distance to Goal: ", Util.goalInTurretSys(drive.getPose(), drive.getAlliance()).getMagnitude());
 
         telemetry.update();
     }

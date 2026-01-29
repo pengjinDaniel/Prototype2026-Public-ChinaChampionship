@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystems.vision;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.angleUnit;
+import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.distanceUnit;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.pedropathing.follower.Follower;
@@ -34,22 +36,34 @@ public class Vision extends SubsystemBase {
         if (fiducialResults.isEmpty()) return null;
         if (fiducialResults.get(0).getFiducialId() != 20 &&
                 fiducialResults.get(0).getFiducialId() != 24) return null;
-        return limelight.getLatestResult().getFiducialResults().get(0);
+        return fiducialResults.get(0);
     }
 
-    public void calibrate(Drive drive) {
+    public Pose2D getVisionPose() {
         LLResultTypes.FiducialResult fiducialResult = getFiducialResult();
-        if (fiducialResult == null) return;
-        Pose2D pose = Util.visionPoseToDWPose(fiducialResult.getRobotPoseFieldSpace());
+        if (fiducialResult == null) return new Pose2D(distanceUnit, -114514, -114514, angleUnit, 0);
+        return Util.visionPoseToDWPose(fiducialResult.getRobotPoseFieldSpace());
+    }
+
+    public boolean calibrate(Drive drive) {
+        Pose2D pose = getVisionPose();
+        if (pose.getX(distanceUnit) < -1e5) return false;
+        if (drive.getAligned() && !Util.epsilonEqual(pose.getHeading(angleUnit), drive.getPose().getHeading(angleUnit), Math.PI * 5 / 180)) {
+            return false;
+        }
         drive.setPose(pose);
         drive.setYawOffset(drive.getAlliance() == Drive.Alliance.BLUE ? Math.PI : 0);
         drive.setAligned(true);
+        return true;
     }
 
     public void autoCalibrate(Follower follower) {
-        LLResultTypes.FiducialResult fiducialResult = getFiducialResult();
-        if (fiducialResult == null) return;
-        Pose pose = Util.Pose2DToPose(Util.visionPoseToDWPose(fiducialResult.getRobotPoseFieldSpace()));
+        Pose2D temp = getVisionPose();
+        if (temp.getX(distanceUnit) < -1e5) return;
+        Pose pose = Util.Pose2DToPose(temp);
+        if (!Util.epsilonEqual(pose.getHeading(), follower.getHeading(), Math.PI * 5 / 180)) {
+            return;
+        }
         follower.setPose(pose);
     }
 }

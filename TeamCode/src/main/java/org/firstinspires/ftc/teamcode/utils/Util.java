@@ -6,6 +6,8 @@ import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.dis
 import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.farGoalDistance;
 import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.nearGoalDistance;
 import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.redGoalPose;
+import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.fastVelocity;
+import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.slowVelocity;
 
 import com.pedropathing.geometry.Pose;
 
@@ -79,17 +81,7 @@ public class Util {
 
     public static double getShooterVelocity(PolarVector goalToTurret) {
         double distanceToGoal = goalToTurret.magnitude;
-        if (distanceToGoal != -1) {
-            double normalizedDistance = (distanceToGoal - nearGoalDistance) / (farGoalDistance - nearGoalDistance);
-
-            double nonlinearFactor = 1.0 + 0.04 * normalizedDistance;
-
-            double finalVelocity = (ShooterConstants.slowVelocity
-                    + (ShooterConstants.fastVelocity - ShooterConstants.slowVelocity)
-                    * normalizedDistance) * nonlinearFactor;
-
-            return 20 * Math.ceil(finalVelocity / 20);
-        }
-        return 0;
+        double k = (fastVelocity - slowVelocity) / (farGoalDistance - nearGoalDistance);
+        return slowVelocity + k * (distanceToGoal - nearGoalDistance);
     }
 }

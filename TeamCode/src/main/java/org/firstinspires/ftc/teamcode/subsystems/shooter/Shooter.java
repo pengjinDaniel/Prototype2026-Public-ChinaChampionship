@@ -27,8 +27,6 @@ public class Shooter extends SubsystemBase {
     private ShooterState shooterState = ShooterState.STOP;
     private PitchState pitchState = PitchState.LOW;
 
-    public double dynamicSpeed;
-
     public Shooter(final HardwareMap hardwareMap) {
         leftShooter = hardwareMap.get(DcMotorEx.class, ShooterConstants.leftShooterName);
         rightShooter = hardwareMap.get(DcMotorEx.class, ShooterConstants.rightShooterName);
@@ -45,7 +43,7 @@ public class Shooter extends SubsystemBase {
         FAST(ShooterConstants.fastVelocity),
         DYNAMIC(0);
 
-        final double shooterVelocity;
+        double shooterVelocity;
 
         public double getShooterVelocity() {
             return shooterVelocity;
@@ -81,7 +79,8 @@ public class Shooter extends SubsystemBase {
     }
 
     public void setDynamicSpeed(double dynamicSpeed) {
-        this.dynamicSpeed = dynamicSpeed;
+        setShooterState(ShooterState.DYNAMIC);
+        shooterState.shooterVelocity = dynamicSpeed;
     }
 
     public double getVelocity() {
@@ -107,11 +106,11 @@ public class Shooter extends SubsystemBase {
             if (shooterState == ShooterState.FAST) {
                 setPitchState(PitchState.HIGH);
             }
-            pitchServo.setPosition(pitchState.servoPos);
         }
         else {
-            rightShooter.setVelocity(dynamicSpeed);
-            leftShooter.setVelocity(dynamicSpeed);
+            rightShooter.setVelocity(-shooterState.getShooterVelocity());
+            leftShooter.setVelocity(shooterState.getShooterVelocity());
         }
+        pitchServo.setPosition(pitchState.servoPos);
     }
 }

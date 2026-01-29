@@ -12,9 +12,9 @@ public class ShooterConstants {
 
     public static double shooterEpsilon = 60;
 
-    public static double highPose = 0.95;
+    public static double highPose = 0.6;
     public static double middlePose = 0.6;
-    public static double lowPose = 0.3;
+    public static double lowPose = 0.0;
 
     /**
      * In Ticks Per Second
