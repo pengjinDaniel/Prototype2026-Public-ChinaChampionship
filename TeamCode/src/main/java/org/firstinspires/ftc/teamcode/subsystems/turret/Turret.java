@@ -47,6 +47,10 @@ public class Turret extends SubsystemBase {
         this.normalizedSetpoint = Util.adjustRange(setpoint);
     }
 
+    public int getTurretPos() {
+        return turretMotor.getCurrentPosition();
+    }
+
     @Override
     public void periodic() {
         if (Math.abs(normalizedSetpoint - Units.ticksToRadians(

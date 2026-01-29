@@ -18,6 +18,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.DriveCommand;
+import org.firstinspires.ftc.teamcode.commands.ShootCommand;
 import org.firstinspires.ftc.teamcode.commands.ShooterAlignCommand;
 import org.firstinspires.ftc.teamcode.commands.TransitCommand;
 import org.firstinspires.ftc.teamcode.commands.TurretAlignCommand;
@@ -86,7 +87,7 @@ public abstract class TeleOpBase extends CommandOpMode {
         ).whenHeld(
                 new TransitCommand(shooter, transit)
                         .andThen(new WaitCommand(200))
-                        .andThen(new InstantCommand(() -> intake.setIntakeState(Intake.IntakeState.FORWARD)))
+                        .andThen(new ShootCommand(intake, shooter))
         ).whenReleased(new InstantCommand(() -> intake.setIntakeState(Intake.IntakeState.STOP)));
 
         new FunctionalButton(
@@ -134,6 +135,7 @@ public abstract class TeleOpBase extends CommandOpMode {
         telemetry.addData("Shooter at SetPoint: ", shooter.isShooterAtSetPoint());
 
         telemetry.addLine("----- Turret -----");
+        telemetry.addData("Encoder Pos: ", turret.getTurretPos());
         telemetry.addData("Turret X: ", Util.drivePoseToTurretPose(drive.getPose()).getX(distanceUnit));
         telemetry.addData("Turret Y: ", Util.drivePoseToTurretPose(drive.getPose()).getY(distanceUnit));
         telemetry.addData("Distance to Goal: ", Util.goalInTurretSys(drive.getPose(), drive.getAlliance()).getMagnitude());

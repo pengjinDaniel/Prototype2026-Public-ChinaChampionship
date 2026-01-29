@@ -2,9 +2,13 @@ package org.firstinspires.ftc.teamcode.subsystems.shooter;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.kD;
+import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.kD1;
 import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.kF;
+import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.kF1;
 import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.kI;
+import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.kI1;
 import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.kP;
+import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.kP1;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -92,25 +96,33 @@ public class Shooter extends SubsystemBase {
                 -rightShooter.getVelocity(), ShooterConstants.shooterEpsilon);
     }
 
+    public PitchState getPitchState() {
+        return pitchState;
+    }
+
     @Override
     public void periodic() {
-        if (shooterState != ShooterState.DYNAMIC) {
-            rightShooter.setVelocity(-shooterState.shooterVelocity);
-            leftShooter.setVelocity(shooterState.shooterVelocity);
-            if (shooterState == ShooterState.STOP) {
-                setPitchState(PitchState.LOW);
-            }
-            if (shooterState == ShooterState.SLOW) {
-                setPitchState(PitchState.MIDDLE);
-            }
-            if (shooterState == ShooterState.FAST) {
-                setPitchState(PitchState.HIGH);
-            }
+        if (shooterState == ShooterState.STOP) {
+            setPitchState(PitchState.LOW);
+        }
+        if (shooterState == ShooterState.SLOW) {
+            setPitchState(PitchState.MIDDLE);
+        }
+        if (shooterState == ShooterState.FAST) {
+            setPitchState(PitchState.HIGH);
+        }
+
+        if (pitchState == PitchState.HIGH) {
+            rightShooter.setVelocityPIDFCoefficients(kP1, kI1, kD1, kF1);
+            leftShooter.setVelocityPIDFCoefficients(kP1, kI1, kD1, kF1);
         }
         else {
-            rightShooter.setVelocity(-shooterState.getShooterVelocity());
-            leftShooter.setVelocity(shooterState.getShooterVelocity());
+            rightShooter.setVelocityPIDFCoefficients(kP, kI, kD, kF);
+            leftShooter.setVelocityPIDFCoefficients(kP, kI, kD, kF);
         }
+
+        rightShooter.setVelocity(-shooterState.shooterVelocity);
+        leftShooter.setVelocity(shooterState.shooterVelocity);
         pitchServo.setPosition(pitchState.servoPos);
     }
 }

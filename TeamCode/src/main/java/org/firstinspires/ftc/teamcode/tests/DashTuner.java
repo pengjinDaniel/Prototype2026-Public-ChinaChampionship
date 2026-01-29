@@ -19,17 +19,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import java.util.Locale;
 
-class PIDF {
-    public double kP, kI, kD, kF;
-
-    PIDF(int kP, int kI, int kD, int kF) {
-        this.kP = kP;
-        this.kI = kI;
-        this.kD = kD;
-        this.kF = kF;
-    }
-}
-
 @TeleOp(name = "DashTuner")
 @Config
 public class DashTuner extends OpMode {
@@ -41,12 +30,11 @@ public class DashTuner extends OpMode {
     public static boolean[] isPositionCloseLoop = new boolean[4];
     public static boolean[] isVelocityCloseLoop = new boolean[4];
 
-    public static PIDF[] PIDFs = {
-            new PIDF(0, 0, 0, 0),
-            new PIDF(0, 0, 0, 0),
-            new PIDF(0, 0, 0, 0),
-            new PIDF(0, 0, 0, 0)
-    };
+    // PIDF parameters as static arrays for Dashboard configuration
+    public static double[] kP = {0, 0, 0, 0};
+    public static double[] kI = {0, 0, 0, 0};
+    public static double[] kD = {0, 0, 0, 0};
+    public static double[] kF = {0, 0, 0, 0};
 
     DcMotorEx[] motors = new DcMotorEx[4];
 
@@ -81,15 +69,15 @@ public class DashTuner extends OpMode {
                     motors[i].setPIDFCoefficients(
                             DcMotor.RunMode.RUN_USING_ENCODER,
                             new PIDFCoefficients(
-                                    PIDFs[i].kP,
-                                    PIDFs[i].kI,
-                                    PIDFs[i].kD,
-                                    PIDFs[i].kF
+                                    kP[i],
+                                    kI[i],
+                                    kD[i],
+                                    kF[i]
                             )
                     );
                 }
                 if (isPositionCloseLoop[i]) {
-                    pidfControllers[i].setPIDF(PIDFs[i].kP, PIDFs[i].kI, PIDFs[i].kD, PIDFs[i].kF);
+                    pidfControllers[i].setPIDF(kP[i], kI[i], kD[i], kF[i]);
                 }
             }
             if (!servoName[i].isEmpty()) {
@@ -107,16 +95,27 @@ public class DashTuner extends OpMode {
         for (int i = 0; i < 4; i++) {
             if (!motorName[i].isEmpty()) {
                 if (slaveTo[i] != -1) {
-                    motors[i].setPower(-motors[slaveTo[i]].getPower());
+                    if (isVelocityCloseLoop[slaveTo[i]] && !isPositionCloseLoop[slaveTo[i]]) {
+                        motors[i].setPIDFCoefficients(
+                                DcMotor.RunMode.RUN_USING_ENCODER,
+                                new PIDFCoefficients(
+                                        kP[slaveTo[i]],
+                                        kI[slaveTo[i]],
+                                        kD[slaveTo[i]],
+                                        kF[slaveTo[i]]
+                                )
+                        );
+                        motors[i].setVelocity(-motorTarget[slaveTo[i]]);
+                    }
                 }
                 else if (isVelocityCloseLoop[i] && !isPositionCloseLoop[i]) {
                     motors[i].setPIDFCoefficients(
                             DcMotor.RunMode.RUN_USING_ENCODER,
                             new PIDFCoefficients(
-                                    PIDFs[i].kP,
-                                    PIDFs[i].kI,
-                                    PIDFs[i].kD,
-                                    PIDFs[i].kF
+                                    kP[i],
+                                    kI[i],
+                                    kD[i],
+                                    kF[i]
                             )
                     );
 
@@ -130,7 +129,7 @@ public class DashTuner extends OpMode {
                     dashboard.sendTelemetryPacket(packet);
                 }
                 else if (isPositionCloseLoop[i] && !isVelocityCloseLoop[i]) {
-                    pidfControllers[i].setPIDF(PIDFs[i].kP, PIDFs[i].kI, PIDFs[i].kD, PIDFs[i].kF);
+                    pidfControllers[i].setPIDF(kP[i], kI[i], kD[i], kF[i]);
                     double pos = motors[i].getCurrentPosition();
 
                     motors[i].setPower(pidfControllers[i].calculate(pos, motorTarget[i]));
