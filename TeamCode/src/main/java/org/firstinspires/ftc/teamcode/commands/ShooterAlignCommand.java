@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
+import com.pedropathing.follower.Follower;
 
 import org.firstinspires.ftc.teamcode.subsystems.drive.Drive;
 import org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants;
@@ -15,11 +16,22 @@ public class ShooterAlignCommand extends CommandBase {
     private Shooter shooter;
     private Drive.Alliance alliance;
     private BooleanSupplier killButton;
+    private Follower follower;
     private boolean isAlign;
 
     public ShooterAlignCommand(Drive drive, Shooter shooter, Drive.Alliance alliance,
                                BooleanSupplier killButton) {
         this.drive = drive;
+        this.shooter = shooter;
+        this.alliance = alliance;
+        this.killButton = killButton;
+        isAlign = true;
+        addRequirements(shooter);
+    }
+
+    public ShooterAlignCommand(Follower follower, Shooter shooter, Drive.Alliance alliance,
+                               BooleanSupplier killButton) {
+        this.follower = follower;
         this.shooter = shooter;
         this.alliance = alliance;
         this.killButton = killButton;
@@ -35,8 +47,14 @@ public class ShooterAlignCommand extends CommandBase {
     @Override
     public void execute() {
         if (killButton.getAsBoolean()) isAlign = !isAlign;
-        if (isAlign && drive.getAligned()) {
-            PolarVector goalInTurretSys = Util.goalInTurretSys(drive.getPose(), alliance);
+        if (isAlign) {
+            PolarVector goalInTurretSys = new PolarVector(0, 0);
+            if (drive != null && drive.getAligned()) {
+                goalInTurretSys = Util.goalInTurretSys(drive.getPose(), alliance);
+            }
+            if (follower != null) {
+                goalInTurretSys = Util.goalInTurretSys(Util.PoseToPose2D(follower.getPose()), alliance);
+            }
             shooter.setDynamicSpeed(Util.getShooterVelocity(goalInTurretSys));
             if (goalInTurretSys.getMagnitude() > 100) {
                 shooter.setPitchState(Shooter.PitchState.HIGH);
