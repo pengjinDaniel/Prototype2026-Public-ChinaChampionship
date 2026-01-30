@@ -43,7 +43,7 @@ public class BlueFar extends CommandOpMode {
 
     public Command transitShootCommand() {
         return new SequentialCommandGroup(
-                new InstantCommand(() -> vision.autoCalibrate(follower)),
+                new InstantCommand(() -> vision.autoCalibrate(follower, turret)),
                 new ParallelDeadlineGroup(
                         new WaitCommand(2500),
                         new TransitCommand(shooter, transit)
@@ -107,7 +107,7 @@ public class BlueFar extends CommandOpMode {
 
         schedule(
                 new ParallelCommandGroup(
-                        new TurretAlignCommand(follower, turret, alliance),
+                        new TurretAlignCommand(follower, turret, alliance, vision),
                         new ShooterAlignCommand(follower, shooter, alliance, () -> false),
                         new SequentialCommandGroup(
                                 cycleCommand()

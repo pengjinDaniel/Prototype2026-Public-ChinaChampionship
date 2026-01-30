@@ -67,7 +67,7 @@ public abstract class TeleOpBase extends CommandOpMode {
         );
 
         drive.setDefaultCommand(new DriveCommand(drive, gamepadEx1));
-        turret.setDefaultCommand(new TurretAlignCommand(drive, turret, getAlliance(), () -> false));
+        turret.setDefaultCommand(new TurretAlignCommand(drive, turret, getAlliance(), vision, () -> false));
         shooter.setDefaultCommand(new ShooterAlignCommand(drive, shooter, getAlliance(), () -> false));
 
         new FunctionalButton(
@@ -114,7 +114,7 @@ public abstract class TeleOpBase extends CommandOpMode {
     @Override
     public void run() {
         CommandScheduler.getInstance().run();
-        aligning = vision.calibrate(drive);
+        aligning = vision.calibrate(drive, turret);
 
         telemetry.addLine("----- Drive -----");
         telemetry.addData("Drive X: ", drive.getPose().getX(distanceUnit));

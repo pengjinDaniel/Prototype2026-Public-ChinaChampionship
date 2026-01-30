@@ -18,7 +18,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.subsystems.drive.Drive;
 import org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants;
+import org.firstinspires.ftc.teamcode.subsystems.turret.Turret;
 import org.firstinspires.ftc.teamcode.subsystems.turret.TurretConstants;
+import org.firstinspires.ftc.teamcode.subsystems.vision.Vision;
 
 public class Util {
     public static Pose Pose2DToPose(Pose2D pose2D) {
@@ -83,5 +85,11 @@ public class Util {
         double distanceToGoal = goalToTurret.magnitude;
         double k = (fastVelocity - slowVelocity) / (farGoalDistance - nearGoalDistance);
         return slowVelocity + k * (distanceToGoal - nearGoalDistance);
+    }
+
+    public static Pose2D turretToDrivePose(Pose2D turretPose, Turret turret) {
+        double driveH = turretPose.getHeading(angleUnit) - Units.ticksToRadians(turret.getTurretPos());
+        return new Pose2D(distanceUnit, Math.cos(driveH) * TurretConstants.offsetToRobot + turretPose.getX(distanceUnit),
+                Math.sin(driveH) * TurretConstants.offsetToRobot + turretPose.getY(distanceUnit), angleUnit, driveH);
     }
 }

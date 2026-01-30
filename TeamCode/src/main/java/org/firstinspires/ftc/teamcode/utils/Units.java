@@ -184,7 +184,12 @@ public final class Units {
     public static double ticksToRadians(int ticks) {
         return (double) ticks / kTicksPerRotation * 2 * Math.PI;
     }
+
     public static int radiansToTicks(double radians) {
         return (int) (radians / Math.PI / 2 * kTicksPerRotation);
+    }
+
+    public static double degreesToTicks(double degrees) {
+        return radiansToTicks(degreesToRadians(degrees));
     }
 }

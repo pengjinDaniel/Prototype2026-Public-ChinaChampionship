@@ -17,12 +17,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.subsystems.drive.Drive;
 import org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants;
+import org.firstinspires.ftc.teamcode.subsystems.turret.Turret;
 import org.firstinspires.ftc.teamcode.utils.Util;
 
 import java.util.List;
 
 public class Vision extends SubsystemBase {
-    private Limelight3A limelight;
+    private final Limelight3A limelight;
 
     public Vision(final HardwareMap hardwareMap) {
         limelight = hardwareMap.get(Limelight3A.class, VisionConstants.limelightName);
@@ -45,25 +46,19 @@ public class Vision extends SubsystemBase {
         return Util.visionPoseToDWPose(fiducialResult.getRobotPoseFieldSpace());
     }
 
-    public boolean calibrate(Drive drive) {
+    public boolean calibrate(Drive drive, Turret turret) {
         Pose2D pose = getVisionPose();
         if (pose.getX(distanceUnit) < -1e5) return false;
-        if (drive.getAligned() && !Util.epsilonEqual(pose.getHeading(angleUnit), drive.getPose().getHeading(angleUnit), Math.PI * 5 / 180)) {
-            return false;
-        }
-        drive.setPose(pose);
+        drive.setPose(Util.turretToDrivePose(pose, turret));
         drive.setYawOffset(drive.getAlliance() == Drive.Alliance.BLUE ? Math.PI : 0);
         drive.setAligned(true);
         return true;
     }
 
-    public void autoCalibrate(Follower follower) {
+    public void autoCalibrate(Follower follower, Turret turret) {
         Pose2D temp = getVisionPose();
         if (temp.getX(distanceUnit) < -1e5) return;
-        Pose pose = Util.Pose2DToPose(temp);
-        if (!Util.epsilonEqual(pose.getHeading(), follower.getHeading(), Math.PI * 5 / 180)) {
-            return;
-        }
+        Pose pose = Util.Pose2DToPose(Util.turretToDrivePose(temp, turret));
         follower.setPose(pose);
     }
 }
