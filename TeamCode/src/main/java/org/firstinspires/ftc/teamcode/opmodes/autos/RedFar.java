@@ -96,6 +96,16 @@ public class RedFar extends CommandOpMode {
 
                 .build();
 
+        Path1 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(88.211, 7.527),
+
+                                new Pose(131.162, 7.463)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+
+                .build();
+
         Path2 = follower.pathBuilder().addPath(
                         new BezierLine(
                                 new Pose(131.162, 7.463),

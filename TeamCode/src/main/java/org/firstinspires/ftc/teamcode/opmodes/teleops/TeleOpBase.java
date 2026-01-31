@@ -45,6 +45,7 @@ public abstract class TeleOpBase extends CommandOpMode {
     public Vision vision;
     public ElapsedTime timer;
     public boolean aligning = false;
+    public double lastTime = 0;
 
     protected abstract Drive.Alliance getAlliance();
 
@@ -114,7 +115,10 @@ public abstract class TeleOpBase extends CommandOpMode {
     @Override
     public void run() {
         CommandScheduler.getInstance().run();
-        aligning = vision.calibrate(drive, turret);
+        if (timer.milliseconds() - lastTime > 150) {
+            aligning = vision.calibrate(drive, turret);
+            lastTime = timer.milliseconds();
+        }
 
         telemetry.addLine("----- Drive -----");
         telemetry.addData("Drive X: ", drive.getPose().getX(distanceUnit));

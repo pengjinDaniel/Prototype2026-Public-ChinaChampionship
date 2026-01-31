@@ -4,7 +4,6 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import com.pedropathing.follower.Follower;
 
 import org.firstinspires.ftc.teamcode.subsystems.drive.Drive;
-import org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.subsystems.shooter.Shooter;
 import org.firstinspires.ftc.teamcode.utils.PolarVector;
 import org.firstinspires.ftc.teamcode.utils.Util;

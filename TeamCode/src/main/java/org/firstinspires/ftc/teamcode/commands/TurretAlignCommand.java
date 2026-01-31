@@ -53,7 +53,7 @@ public class TurretAlignCommand extends CommandBase {
     public void execute() {
         if (killButton.getAsBoolean()) isAlign = !isAlign;
         if (isAlign) {
-            if (drive != null) {
+            if (drive != null && drive.getAligned()) {
                 PolarVector goalInTurretSys = Util.goalInTurretSys(drive.getPose(), alliance);
                 turret.setTurret(goalInTurretSys.getHeading(DriveConstants.angleUnit));
             }

@@ -39,7 +39,7 @@ public class BlueFar extends CommandOpMode {
     private Vision vision;
     private Drive.Alliance alliance;
 
-    public PathChain Path1, Path2, Path3, Path4, Path5, Path6, Path7, Path8, Path9, Path10, Path11, Path12, Path13, Path14;
+    public PathChain Path1, Path2, Path0, Path4, Path5, Path6, Path7, Path8, Path9, Path10, Path11, Path12, Path13, Path14;
 
     public Command transitShootCommand() {
         return new SequentialCommandGroup(
@@ -62,7 +62,6 @@ public class BlueFar extends CommandOpMode {
 
     public Command cycleCommand() {
         return new SequentialCommandGroup(
-                transitShootCommand(),
                 intakeCommand(Path1),
                 new ParallelRaceGroup(
                         new WaitCommand(2000),
@@ -85,9 +84,19 @@ public class BlueFar extends CommandOpMode {
 
         follower.setStartingPose(new Pose(55.789, 7.527, Math.toRadians(180)));
 
-        Path1 = follower.pathBuilder().addPath(
+        Path0 = follower.pathBuilder().addPath(
                         new BezierLine(
                                 new Pose(55.789, 7.527),
+
+                                new Pose(54.789, 7.527)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+
+                .build();
+
+        Path1 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(54.789, 7.527),
 
                                 new Pose(12.838, 7.463)
                         )
@@ -110,7 +119,15 @@ public class BlueFar extends CommandOpMode {
                         new TurretAlignCommand(follower, turret, alliance, vision),
                         new ShooterAlignCommand(follower, shooter, alliance, () -> false),
                         new SequentialCommandGroup(
-                                cycleCommand()
+                                new AutoDriveCommand(follower, Path0),
+                                new ParallelDeadlineGroup(
+                                        new WaitCommand(2500),
+                                        transitShootCommand()
+                                ),
+                                cycleCommand(),
+                                cycleCommand(),
+                                cycleCommand(),
+                                new AutoDriveCommand(follower, Path1)
                         )
                 )
         );

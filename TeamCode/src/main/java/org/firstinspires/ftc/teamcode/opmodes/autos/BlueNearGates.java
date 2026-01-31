@@ -71,7 +71,7 @@ public class BlueNearGates extends CommandOpMode {
         this.vision = new Vision(hardwareMap);
         this.alliance = Drive.Alliance.BLUE;
 
-        follower.setStartingPose(new Pose(31.678, 135.790, Math.toRadians(270)));
+        follower.setStartingPose(new Pose(31.678, 135.790, Math.toRadians(-90)));
 
         Path1 = follower.pathBuilder().addPath(
                         new BezierLine(
@@ -79,7 +79,7 @@ public class BlueNearGates extends CommandOpMode {
 
                                 new Pose(44.694, 99.067)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(135))
+                ).setLinearHeadingInterpolation(Math.toRadians(-90), Math.toRadians(135))
 
                 .build();
 
@@ -87,7 +87,7 @@ public class BlueNearGates extends CommandOpMode {
                         new BezierLine(
                                 new Pose(44.694, 99.067),
 
-                                new Pose(53.043, 59.271)
+                                new Pose(58.786, 59.484)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(180))
 
@@ -95,7 +95,7 @@ public class BlueNearGates extends CommandOpMode {
 
         Path3 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(53.043, 59.271),
+                                new Pose(58.786, 59.484),
 
                                 new Pose(22.596, 59.492)
                         )
@@ -107,7 +107,7 @@ public class BlueNearGates extends CommandOpMode {
                         new BezierCurve(
                                 new Pose(22.596, 59.492),
                                 new Pose(28.937, 67.404),
-                                new Pose(14.808, 66.098)
+                                new Pose(21.079, 66.216)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
 
@@ -115,7 +115,7 @@ public class BlueNearGates extends CommandOpMode {
 
         Path5 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(14.808, 66.098),
+                                new Pose(21.079, 66.216),
                                 new Pose(68.391, 67.681),
                                 new Pose(44.742, 99.126)
                         )
@@ -137,17 +137,17 @@ public class BlueNearGates extends CommandOpMode {
                         new BezierLine(
                                 new Pose(47.857, 83.287),
 
-                                new Pose(20.723, 83.623)
+                                new Pose(22.920, 83.423)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
 
                 .build();
 
-        Path9 = follower.pathBuilder().addPath(
+        Path8 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(20.723, 83.623),
+                                new Pose(22.920, 83.423),
                                 new Pose(29.862, 73.952),
-                                new Pose(14.733, 71.758)
+                                new Pose(23.438, 72.195)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
 
@@ -155,7 +155,7 @@ public class BlueNearGates extends CommandOpMode {
 
         Path9 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(14.733, 71.758),
+                                new Pose(23.438, 72.195),
 
                                 new Pose(44.724, 99.291)
                         )
@@ -224,7 +224,7 @@ public class BlueNearGates extends CommandOpMode {
                                 intakeCommand(Path11),
                                 intakeCommand(Path12),
                                 transitShootCommand(),
-                                new AutoDriveCommand(follower, Path10)
+                                new AutoDriveCommand(follower, Path13)
                         )
                 )
         );
