@@ -39,7 +39,7 @@ public class BlueFar extends CommandOpMode {
     private Vision vision;
     private Drive.Alliance alliance;
 
-    public PathChain Path1, Path2, Path0, Path4, Path5, Path6, Path7, Path8, Path9, Path10, Path11, Path12, Path13, Path14;
+    public PathChain Path1, Path2, Path3, Path4, Path5, Path6, Path7, Path8, Path9, Path10, Path11, Path12, Path13, Path14;
 
     public Command transitShootCommand() {
         return new SequentialCommandGroup(
@@ -57,17 +57,17 @@ public class BlueFar extends CommandOpMode {
         return new ParallelRaceGroup(
                 new AutoDriveCommand(follower, path),
                 new IntakeCommand(intake, transit)
-        );
+        ).alongWith(new InstantCommand(() -> intake.setIntakeState(Intake.IntakeState.STOP)));
     }
 
     public Command cycleCommand() {
         return new SequentialCommandGroup(
-                intakeCommand(Path1),
+                intakeCommand(Path4),
                 new ParallelRaceGroup(
-                        new WaitCommand(2000),
+                        new WaitCommand(1000),
                         new IntakeCommand(intake, transit)
                 ),
-                intakeCommand(Path2),
+                intakeCommand(Path5),
                 transitShootCommand()
         );
     }
@@ -84,21 +84,11 @@ public class BlueFar extends CommandOpMode {
 
         follower.setStartingPose(new Pose(55.789, 7.527, Math.toRadians(180)));
 
-        Path0 = follower.pathBuilder().addPath(
+        Path1 = follower.pathBuilder().addPath(
                         new BezierLine(
                                 new Pose(55.789, 7.527),
 
-                                new Pose(54.789, 7.527)
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
-
-                .build();
-
-        Path1 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(54.789, 7.527),
-
-                                new Pose(12.838, 7.463)
+                                new Pose(55.804, 11.079)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
 
@@ -106,9 +96,49 @@ public class BlueFar extends CommandOpMode {
 
         Path2 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(12.838, 7.463),
+                                new Pose(55.804, 11.079),
 
-                                new Pose(55.796, 7.459)
+                                new Pose(13.021, 8.129)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+
+                .build();
+
+        Path3 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(13.021, 8.129),
+
+                                new Pose(55.894, 11.080)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+
+                .build();
+
+        Path4 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(55.894, 11.080),
+
+                                new Pose(12.922, 10.941)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+
+                .build();
+
+        Path5 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(12.922, 10.941),
+
+                                new Pose(55.929, 11.204)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+
+                .build();
+
+        Path6 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(55.929, 11.204),
+
+                                new Pose(37.245, 11.024)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
 
@@ -119,15 +149,19 @@ public class BlueFar extends CommandOpMode {
                         new TurretAlignCommand(follower, turret, alliance, vision),
                         new ShooterAlignCommand(follower, shooter, alliance, () -> false),
                         new SequentialCommandGroup(
-                                new AutoDriveCommand(follower, Path0),
-                                new ParallelDeadlineGroup(
-                                        new WaitCommand(2500),
-                                        transitShootCommand()
+                                new AutoDriveCommand(follower, Path1),
+                                new WaitCommand(1500),
+                                transitShootCommand(),
+                                intakeCommand(Path2),
+                                new ParallelRaceGroup(
+                                        new WaitCommand(1000),
+                                        new IntakeCommand(intake, transit)
                                 ),
+                                intakeCommand(Path3),
+                                transitShootCommand(),
                                 cycleCommand(),
                                 cycleCommand(),
-                                cycleCommand(),
-                                new AutoDriveCommand(follower, Path1)
+                                new AutoDriveCommand(follower, Path6)
                         )
                 )
         );

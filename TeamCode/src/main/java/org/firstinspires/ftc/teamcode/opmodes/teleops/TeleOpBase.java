@@ -4,7 +4,9 @@ import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.ang
 import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.distanceUnit;
 import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.nearGoalDistance;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
@@ -12,10 +14,12 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.bylazar.configurables.annotations.Configurable;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.DriveCommand;
 import org.firstinspires.ftc.teamcode.commands.ShootCommand;
@@ -48,6 +52,43 @@ public abstract class TeleOpBase extends CommandOpMode {
     public double lastTime = 0;
 
     protected abstract Drive.Alliance getAlliance();
+    public FtcDashboard dashboard;
+
+    private void printPose() {
+        TelemetryPacket packet = new TelemetryPacket();
+        Pose2D pose = drive.getPose();
+
+        double x = pose.getX(distanceUnit);
+        double y = pose.getY(distanceUnit);
+        double heading = pose.getHeading(angleUnit);
+
+        double xDraw = 144 - x;
+        double yDraw = 144 - y;
+
+        double headingDraw = heading + Math.PI;
+
+        headingDraw = Math.atan2(Math.sin(headingDraw), Math.cos(headingDraw));
+
+        packet.put("x(raw)", x);
+        packet.put("y(raw)", y);
+        packet.put("heading(raw deg)", Math.toDegrees(heading));
+
+        packet.put("x(draw)", xDraw);
+        packet.put("y(draw)", yDraw);
+        packet.put("heading(draw deg)", Math.toDegrees(headingDraw));
+
+        packet.fieldOverlay().setFill("blue");
+        packet.fieldOverlay().fillCircle(xDraw, yDraw, 2.0);
+
+        double headingLength = 5.0;
+        double hx = xDraw + Math.cos(headingDraw) * headingLength;
+        double hy = yDraw + Math.sin(headingDraw) * headingLength;
+
+        packet.fieldOverlay().setStroke("red");
+        packet.fieldOverlay().strokeLine(xDraw, yDraw, hx, hy);
+
+        dashboard.sendTelemetryPacket(packet);
+    }
 
     @Override
     public void initialize() {
@@ -59,6 +100,7 @@ public abstract class TeleOpBase extends CommandOpMode {
         timer = new ElapsedTime();
         turret = new Turret(hardwareMap);
         vision = new Vision(hardwareMap);
+        dashboard = FtcDashboard.getInstance();
         timer.reset();
 
         new FunctionalButton(
@@ -115,10 +157,12 @@ public abstract class TeleOpBase extends CommandOpMode {
     @Override
     public void run() {
         CommandScheduler.getInstance().run();
-        if (timer.milliseconds() - lastTime > 150) {
+        if (timer.milliseconds() - lastTime > 500) {
             aligning = vision.calibrate(drive, turret);
             lastTime = timer.milliseconds();
         }
+
+        printPose();
 
         telemetry.addLine("----- Drive -----");
         telemetry.addData("Drive X: ", drive.getPose().getX(distanceUnit));
@@ -140,6 +184,7 @@ public abstract class TeleOpBase extends CommandOpMode {
 
         telemetry.addLine("----- Turret -----");
         telemetry.addData("Encoder Pos: ", turret.getTurretPos());
+        telemetry.addData("Turret SetPoint: ", turret.getTicksSetpoint());
         telemetry.addData("Turret X: ", Util.drivePoseToTurretPose(drive.getPose()).getX(distanceUnit));
         telemetry.addData("Turret Y: ", Util.drivePoseToTurretPose(drive.getPose()).getY(distanceUnit));
         telemetry.addData("Distance to Goal: ", Util.goalInTurretSys(drive.getPose(), drive.getAlliance()).getMagnitude());

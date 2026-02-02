@@ -1,14 +1,11 @@
 package org.firstinspires.ftc.teamcode.subsystems.shooter;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.fastVelocity;
 import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.kD;
-import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.kD1;
 import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.kF;
-import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.kF1;
 import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.kI;
-import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.kI1;
 import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.kP;
-import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.kP1;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -112,17 +109,11 @@ public class Shooter extends SubsystemBase {
             setPitchState(PitchState.HIGH);
         }
 
-        if (pitchState == PitchState.HIGH) {
-            rightShooter.setVelocityPIDFCoefficients(kP1, kI1, kD1, kF1);
-            leftShooter.setVelocityPIDFCoefficients(kP1, kI1, kD1, kF1);
-        }
-        else {
-            rightShooter.setVelocityPIDFCoefficients(kP, kI, kD, kF);
-            leftShooter.setVelocityPIDFCoefficients(kP, kI, kD, kF);
-        }
+        rightShooter.setVelocityPIDFCoefficients(kP, kI, kD, kF);
+        leftShooter.setVelocityPIDFCoefficients(kP, kI, kD, kF);
 
-        rightShooter.setVelocity(-shooterState.shooterVelocity);
-        leftShooter.setVelocity(shooterState.shooterVelocity);
+        rightShooter.setVelocity(-Math.min(shooterState.shooterVelocity, fastVelocity));
+        leftShooter.setVelocity(Math.min(shooterState.shooterVelocity, fastVelocity));
         pitchServo.setPosition(pitchState.servoPos);
     }
 }

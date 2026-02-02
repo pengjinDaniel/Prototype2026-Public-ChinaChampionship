@@ -10,7 +10,6 @@ import com.arcrobotics.ftclib.command.ParallelRaceGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
@@ -58,18 +57,17 @@ public class RedFar extends CommandOpMode {
         return new ParallelRaceGroup(
                 new AutoDriveCommand(follower, path),
                 new IntakeCommand(intake, transit)
-        );
+        ).alongWith(new InstantCommand(() -> intake.setIntakeState(Intake.IntakeState.STOP)));
     }
 
     public Command cycleCommand() {
         return new SequentialCommandGroup(
-                transitShootCommand(),
-                intakeCommand(Path1),
+                intakeCommand(Path4),
                 new ParallelRaceGroup(
-                        new WaitCommand(2000),
+                        new WaitCommand(1000),
                         new IntakeCommand(intake, transit)
                 ),
-                intakeCommand(Path2),
+                intakeCommand(Path5),
                 transitShootCommand()
         );
     }
@@ -90,17 +88,7 @@ public class RedFar extends CommandOpMode {
                         new BezierLine(
                                 new Pose(88.211, 7.527),
 
-                                new Pose(131.162, 7.463)
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
-
-                .build();
-
-        Path1 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(88.211, 7.527),
-
-                                new Pose(131.162, 7.463)
+                                new Pose(88.196, 11.079)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
 
@@ -108,9 +96,49 @@ public class RedFar extends CommandOpMode {
 
         Path2 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(131.162, 7.463),
+                                new Pose(88.196, 11.079),
 
-                                new Pose(88.204, 7.459)
+                                new Pose(130.979, 8.129)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+
+                .build();
+
+        Path3 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(130.979, 8.129),
+
+                                new Pose(88.106, 11.080)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+
+                .build();
+
+        Path4 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(88.106, 11.080),
+
+                                new Pose(131.078, 10.941)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+
+                .build();
+
+        Path5 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(131.078, 10.941),
+
+                                new Pose(88.071, 11.204)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+
+                .build();
+
+        Path6 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(88.071, 11.204),
+
+                                new Pose(105.904, 10.598)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
 
@@ -121,7 +149,19 @@ public class RedFar extends CommandOpMode {
                         new TurretAlignCommand(follower, turret, alliance, vision),
                         new ShooterAlignCommand(follower, shooter, alliance, () -> false),
                         new SequentialCommandGroup(
-                                cycleCommand()
+                                new AutoDriveCommand(follower, Path1),
+                                new WaitCommand(1500),
+                                transitShootCommand(),
+                                intakeCommand(Path2),
+                                new ParallelRaceGroup(
+                                        new WaitCommand(1000),
+                                        new IntakeCommand(intake, transit)
+                                ),
+                                intakeCommand(Path3),
+                                transitShootCommand(),
+                                cycleCommand(),
+                                cycleCommand(),
+                                new AutoDriveCommand(follower, Path6)
                         )
                 )
         );

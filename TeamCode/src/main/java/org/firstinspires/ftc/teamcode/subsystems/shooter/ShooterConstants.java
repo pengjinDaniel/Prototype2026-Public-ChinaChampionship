@@ -20,16 +20,10 @@ public class ShooterConstants {
      * In Ticks Per Second
      */
     public static double stopVelocity = 0;
-    public static double fastVelocity = 1440;
-    public static double slowVelocity = 1120;
-    public static double kP = -140.0;
+    public static double fastVelocity = 1400;
+    public static double slowVelocity = 1100;
+    public static double kP = 140.0;
     public static double kI = 0.0;
     public static double kD = 0.0;
-    public static double kF = -18.0;
-
-
-    public static double kP1 = -140.0;
-    public static double kI1 = 0.0;
-    public static double kD1 = 0.0;
-    public static double kF1 = -18.0;
+    public static double kF = 18.0;
 }

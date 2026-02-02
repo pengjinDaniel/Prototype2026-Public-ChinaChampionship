@@ -71,33 +71,33 @@ public class RedNearGates extends CommandOpMode {
         this.vision = new Vision(hardwareMap);
         this.alliance = Drive.Alliance.RED;
 
-        follower.setStartingPose(new Pose(112.322, 135.790, Math.toRadians(270)));
+        follower.setStartingPose(new Pose(110.818, 136.130, Math.toRadians(0)));
 
         Path1 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(112.322, 135.790),
+                                new Pose(110.818, 136.130),
 
-                                new Pose(99.306, 99.067)
+                                new Pose(96.967, 95.663)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(45))
+                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
 
                 .build();
 
         Path2 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(99.306, 99.067),
+                                new Pose(96.967, 95.663),
 
-                                new Pose(85.214, 59.484)
+                                new Pose(94.786, 60.122)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
+                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
 
                 .build();
 
         Path3 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(85.214, 59.484),
+                                new Pose(94.786, 60.122),
 
-                                new Pose(118.708, 59.692)
+                                new Pose(130.338, 59.918)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
 
@@ -105,9 +105,9 @@ public class RedNearGates extends CommandOpMode {
 
         Path4 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(118.708, 59.692),
-                                new Pose(115.063, 67.404),
-                                new Pose(120.025, 66.316)
+                                new Pose(130.338, 59.918),
+                                new Pose(100.812, 66.128),
+                                new Pose(122.708, 67.492)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
 
@@ -115,29 +115,29 @@ public class RedNearGates extends CommandOpMode {
 
         Path5 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(120.025, 66.316),
+                                new Pose(122.708, 67.492),
                                 new Pose(75.609, 67.681),
-                                new Pose(99.258, 99.126)
+                                new Pose(97.344, 95.935)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(45))
+                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
 
                 .build();
 
         Path6 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(99.258, 99.126),
+                                new Pose(97.344, 95.935),
 
-                                new Pose(96.143, 83.287)
+                                new Pose(96.781, 84.563)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
+                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
 
                 .build();
 
         Path7 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(96.143, 83.287),
+                                new Pose(96.781, 84.563),
 
-                                new Pose(119.183, 83.223)
+                                new Pose(124.979, 84.261)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
 
@@ -145,9 +145,9 @@ public class RedNearGates extends CommandOpMode {
 
         Path8 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(119.183, 83.223),
-                                new Pose(114.138, 73.952),
-                                new Pose(120.163, 72.694)
+                                new Pose(124.979, 84.261),
+                                new Pose(102.865, 79.270),
+                                new Pose(122.759, 71.995)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
 
@@ -155,29 +155,29 @@ public class RedNearGates extends CommandOpMode {
 
         Path9 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(120.163, 72.694),
+                                new Pose(122.759, 71.995),
 
-                                new Pose(99.276, 99.291)
+                                new Pose(96.936, 96.100)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(45))
+                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
 
                 .build();
 
         Path10 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(99.276, 99.291),
+                                new Pose(96.936, 96.100),
 
-                                new Pose(85.934, 35.018)
+                                new Pose(93.592, 36.082)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
+                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
 
                 .build();
 
         Path11 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(85.934, 35.018),
+                                new Pose(93.592, 36.082),
 
-                                new Pose(123.053, 35.498)
+                                new Pose(126.882, 35.711)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
 
@@ -185,21 +185,21 @@ public class RedNearGates extends CommandOpMode {
 
         Path12 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(123.053, 35.498),
+                                new Pose(126.882, 35.711),
 
-                                new Pose(99.362, 99.377)
+                                new Pose(96.809, 95.974)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(45))
+                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
 
                 .build();
 
         Path13 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(99.362, 99.377),
+                                new Pose(96.809, 95.974),
 
                                 new Pose(109.108, 73.632)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
+                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
 
                 .build();
 
@@ -212,8 +212,8 @@ public class RedNearGates extends CommandOpMode {
                                 transitShootCommand(),
                                 intakeCommand(Path2),
                                 intakeCommand(Path3),
-                                new AutoDriveCommand(follower, Path4),
-                                new AutoDriveCommand(follower, Path5),
+                                intakeCommand(Path4),
+                                intakeCommand(Path5),
                                 transitShootCommand(),
                                 intakeCommand(Path6),
                                 intakeCommand(Path7),

@@ -46,9 +46,9 @@ public class BlueNear21 extends CommandOpMode {
         return new SequentialCommandGroup(
                 new InstantCommand(() -> vision.autoCalibrate(follower, turret)),
                 new ParallelDeadlineGroup(
-                        new WaitCommand(2500),
+                        new WaitCommand(1850),
                         new TransitCommand(shooter, transit)
-                                .andThen(new WaitCommand(200))
+                                .andThen(new WaitCommand(100))
                                 .andThen(new ShootCommand(intake, shooter))
                 )
         );
@@ -80,33 +80,33 @@ public class BlueNear21 extends CommandOpMode {
         this.vision = new Vision(hardwareMap);
         this.alliance = Drive.Alliance.BLUE;
 
-        follower.setStartingPose(new Pose(17.229, 119.048, Math.toRadians(144)));
+        follower.setStartingPose(new Pose(31.905, 134.641, Math.toRadians(90)));
 
         Path1 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(17.229, 119.048),
+                                new Pose(31.905, 134.641),
 
-                                new Pose(52.963, 90.612)
+                                new Pose(51.474, 91.462)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(144), Math.toRadians(144))
+                ).setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(180))
 
                 .build();
 
         Path2 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(52.963, 90.612),
+                                new Pose(51.474, 91.462),
 
-                                new Pose(47.476, 59.963)
+                                new Pose(47.547, 59.787)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(144), Math.toRadians(180))
+                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
 
                 .build();
 
         Path3 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(47.476, 59.963),
+                                new Pose(47.547, 59.787),
 
-                                new Pose(20.452, 59.405)
+                                new Pose(18.505, 59.557)
                         )
                 ).setTangentHeadingInterpolation()
                 .setReversed()
@@ -114,39 +114,39 @@ public class BlueNear21 extends CommandOpMode {
 
         Path4 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(20.452, 59.405),
-                                new Pose(33.806, 66.496),
-                                new Pose(20.700, 67.718)
+                                new Pose(18.505, 59.557),
+                                new Pose(41.047, 66.245),
+                                new Pose(51.383, 91.524)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                ).setTangentHeadingInterpolation()
 
                 .build();
 
         Path5 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(20.700, 67.718),
-                                new Pose(50.708, 66.820),
-                                new Pose(52.892, 90.678)
-                        )
-                ).setTangentHeadingInterpolation()
-
-                .build();
-
-        Path6 = follower.pathBuilder().addPath(
-                        new BezierCurve(
-                                new Pose(52.892, 90.678),
-                                new Pose(49.764, 81.912),
-                                new Pose(18.560, 83.864)
+                                new Pose(51.383, 91.524),
+                                new Pose(45.944, 63.811),
+                                new Pose(20.610, 64.236)
                         )
                 ).setTangentHeadingInterpolation()
                 .setReversed()
                 .build();
 
-        Path7 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(18.560, 83.864),
+        Path6 = follower.pathBuilder().addPath(
+                        new BezierCurve(
+                                new Pose(20.610, 64.236),
+                                new Pose(29.586, 55.749),
+                                new Pose(14.038, 51.687)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(135))
 
-                                new Pose(52.786, 90.555)
+                .build();
+
+        Path7 = follower.pathBuilder().addPath(
+                        new BezierCurve(
+                                new Pose(14.038, 51.687),
+                                new Pose(40.801, 64.085),
+                                new Pose(51.697, 91.798)
                         )
                 ).setTangentHeadingInterpolation()
 
@@ -154,19 +154,19 @@ public class BlueNear21 extends CommandOpMode {
 
         Path8 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(52.786, 90.555),
+                                new Pose(51.697, 91.798),
 
-                                new Pose(51.182, 35.446)
+                                new Pose(45.332, 83.759)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(180))
+                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
 
                 .build();
 
         Path9 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(51.182, 35.446),
+                                new Pose(45.332, 83.759),
 
-                                new Pose(21.052, 35.575)
+                                new Pose(20.786, 83.554)
                         )
                 ).setTangentHeadingInterpolation()
                 .setReversed()
@@ -174,9 +174,9 @@ public class BlueNear21 extends CommandOpMode {
 
         Path10 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(21.052, 35.575),
+                                new Pose(20.786, 83.554),
 
-                                new Pose(53.053, 90.439)
+                                new Pose(51.644, 91.502)
                         )
                 ).setTangentHeadingInterpolation()
 
@@ -184,12 +184,42 @@ public class BlueNear21 extends CommandOpMode {
 
         Path11 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(53.053, 90.439),
+                                new Pose(51.644, 91.502),
 
-                                new Pose(30.194, 72.818)
+                                new Pose(50.910, 35.369)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
 
+                .build();
+
+        Path12 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(50.910, 35.369),
+
+                                new Pose(18.149, 35.777)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+
+                .build();
+
+        Path13 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(18.149, 35.777),
+
+                                new Pose(51.679, 91.718)
+                        )
+                ).setTangentHeadingInterpolation()
+
+                .build();
+
+        Path14 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(51.679, 91.718),
+
+                                new Pose(31.923, 71.968)
+                        )
+                ).setTangentHeadingInterpolation()
+                .setReversed()
                 .build();
 
         schedule(
@@ -202,16 +232,24 @@ public class BlueNear21 extends CommandOpMode {
                                 intakeCommand(Path2),
                                 intakeCommand(Path3),
                                 intakeCommand(Path4),
-                                intakeCommand(Path5),
                                 transitShootCommand(),
+                                intakeCommand(Path5),
                                 intakeCommand(Path6),
+                                new ParallelDeadlineGroup(
+                                        new WaitCommand(500),
+                                        new IntakeCommand(intake, transit)
+                                ),
                                 intakeCommand(Path7),
                                 transitShootCommand(),
                                 intakeCommand(Path8),
                                 intakeCommand(Path9),
                                 intakeCommand(Path10),
                                 transitShootCommand(),
-                                new AutoDriveCommand(follower, Path11)
+                                intakeCommand(Path11),
+                                intakeCommand(Path12),
+                                intakeCommand(Path13),
+                                transitShootCommand(),
+                                intakeCommand(Path14)
                         )
                 )
         );

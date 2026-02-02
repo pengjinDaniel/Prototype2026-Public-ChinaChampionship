@@ -46,9 +46,9 @@ public class RedNear21 extends CommandOpMode {
         return new SequentialCommandGroup(
                 new InstantCommand(() -> vision.autoCalibrate(follower, turret)),
                 new ParallelDeadlineGroup(
-                        new WaitCommand(2500),
+                        new WaitCommand(1850),
                         new TransitCommand(shooter, transit)
-                                .andThen(new WaitCommand(200))
+                                .andThen(new WaitCommand(100))
                                 .andThen(new ShootCommand(intake, shooter))
                 )
         );
@@ -80,33 +80,33 @@ public class RedNear21 extends CommandOpMode {
         this.vision = new Vision(hardwareMap);
         this.alliance = Drive.Alliance.RED;
 
-        follower.setStartingPose(new Pose(126.771, 119.048, Math.toRadians(36)));
+        follower.setStartingPose(new Pose(112.095, 134.641, Math.toRadians(90)));
 
         Path1 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(126.771, 119.048),
+                                new Pose(112.095, 134.641),
 
-                                new Pose(91.037, 90.612)
+                                new Pose(92.526, 91.462)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(36), Math.toRadians(36))
+                ).setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(0))
 
                 .build();
 
         Path2 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(91.037, 90.612),
+                                new Pose(92.526, 91.462),
 
-                                new Pose(96.524, 59.963)
+                                new Pose(96.453, 59.787)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(36), Math.toRadians(0))
+                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
 
                 .build();
 
         Path3 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(96.524, 59.963),
+                                new Pose(96.453, 59.787),
 
-                                new Pose(123.548, 59.405)
+                                new Pose(125.495, 59.557)
                         )
                 ).setTangentHeadingInterpolation()
 
@@ -114,39 +114,39 @@ public class RedNear21 extends CommandOpMode {
 
         Path4 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(123.548, 59.405),
-                                new Pose(110.194, 66.496),
-                                new Pose(123.300, 67.718)
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
-
-                .build();
-
-        Path5 = follower.pathBuilder().addPath(
-                        new BezierCurve(
-                                new Pose(123.300, 67.718),
-                                new Pose(93.292, 66.820),
-                                new Pose(91.108, 90.678)
+                                new Pose(125.495, 59.557),
+                                new Pose(102.953, 66.245),
+                                new Pose(92.617, 91.524)
                         )
                 ).setTangentHeadingInterpolation()
                 .setReversed()
                 .build();
 
-        Path6 = follower.pathBuilder().addPath(
+        Path5 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(91.108, 90.678),
-                                new Pose(94.236, 81.912),
-                                new Pose(125.440, 83.864)
+                                new Pose(92.617, 91.524),
+                                new Pose(98.056, 63.811),
+                                new Pose(123.390, 64.236)
                         )
                 ).setTangentHeadingInterpolation()
 
                 .build();
 
-        Path7 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(125.440, 83.864),
+        Path6 = follower.pathBuilder().addPath(
+                        new BezierCurve(
+                                new Pose(123.390, 64.236),
+                                new Pose(114.414, 55.749),
+                                new Pose(129.962, 51.687)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(45))
 
-                                new Pose(91.214, 90.555)
+                .build();
+
+        Path7 = follower.pathBuilder().addPath(
+                        new BezierCurve(
+                                new Pose(129.962, 51.687),
+                                new Pose(103.199, 64.085),
+                                new Pose(92.303, 91.798)
                         )
                 ).setTangentHeadingInterpolation()
                 .setReversed()
@@ -154,19 +154,19 @@ public class RedNear21 extends CommandOpMode {
 
         Path8 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(91.214, 90.555),
+                                new Pose(92.303, 91.798),
 
-                                new Pose(92.818, 35.446)
+                                new Pose(98.668, 83.759)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
+                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
 
                 .build();
 
         Path9 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(92.818, 35.446),
+                                new Pose(98.668, 83.759),
 
-                                new Pose(122.948, 35.575)
+                                new Pose(123.214, 83.554)
                         )
                 ).setTangentHeadingInterpolation()
 
@@ -174,9 +174,9 @@ public class RedNear21 extends CommandOpMode {
 
         Path10 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(122.948, 35.575),
+                                new Pose(123.214, 83.554),
 
-                                new Pose(90.947, 90.439)
+                                new Pose(92.356, 91.502)
                         )
                 ).setTangentHeadingInterpolation()
                 .setReversed()
@@ -184,11 +184,41 @@ public class RedNear21 extends CommandOpMode {
 
         Path11 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(90.947, 90.439),
+                                new Pose(92.356, 91.502),
 
-                                new Pose(113.806, 72.818)
+                                new Pose(93.090, 35.369)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+
+                .build();
+
+        Path12 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(93.090, 35.369),
+
+                                new Pose(125.851, 35.777)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+
+                .build();
+
+        Path13 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(125.851, 35.777),
+
+                                new Pose(92.321, 91.718)
+                        )
+                ).setTangentHeadingInterpolation()
+                .setReversed()
+                .build();
+
+        Path14 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(92.321, 91.718),
+
+                                new Pose(112.077, 71.968)
+                        )
+                ).setTangentHeadingInterpolation()
 
                 .build();
 
@@ -202,16 +232,24 @@ public class RedNear21 extends CommandOpMode {
                                 intakeCommand(Path2),
                                 intakeCommand(Path3),
                                 intakeCommand(Path4),
-                                intakeCommand(Path5),
                                 transitShootCommand(),
+                                intakeCommand(Path5),
                                 intakeCommand(Path6),
+                                new ParallelDeadlineGroup(
+                                        new WaitCommand(500),
+                                        new IntakeCommand(intake, transit)
+                                ),
                                 intakeCommand(Path7),
                                 transitShootCommand(),
                                 intakeCommand(Path8),
                                 intakeCommand(Path9),
                                 intakeCommand(Path10),
                                 transitShootCommand(),
-                                new AutoDriveCommand(follower, Path11)
+                                intakeCommand(Path11),
+                                intakeCommand(Path12),
+                                intakeCommand(Path13),
+                                transitShootCommand(),
+                                intakeCommand(Path14)
                         )
                 )
         );
