@@ -51,6 +51,11 @@ public class Drive extends SubsystemBase {
     private final double[] velYArray = new double[MEDIAN_FILTER_SIZE];
     private final double[] headingVelArray = new double[MEDIAN_FILTER_SIZE];
 
+    // 存储滤波后的速度值，在 periodic() 中更新
+    private double filteredVelX = 0;
+    private double filteredVelY = 0;
+    private double filteredHeadingVel = 0;
+
     public enum DriveState {
         STOP,
         TELEOP;
@@ -118,24 +123,34 @@ public class Drive extends SubsystemBase {
         return array[MEDIAN_FILTER_SIZE / 2];
     }
 
-    public double getFilteredVelX() {
+    // 在 periodic() 中调用，更新滤波值
+    private void updateFilteredVelocities() {
         double rawVelX = od.getVelX(DriveConstants.distanceUnit);
-        return applyMedianFilter(velXBuffer, rawVelX, velXArray);
+        double rawVelY = od.getVelY(DriveConstants.distanceUnit);
+        double rawHeadingVel = od.getHeadingVelocity(UnnormalizedAngleUnit.RADIANS);
+
+        filteredVelX = applyMedianFilter(velXBuffer, rawVelX, velXArray);
+        filteredVelY = applyMedianFilter(velYBuffer, rawVelY, velYArray);
+        filteredHeadingVel = applyMedianFilter(headingVelBuffer, rawHeadingVel, headingVelArray);
+    }
+
+    public double getFilteredVelX() {
+        return filteredVelX;
     }
 
     public double getFilteredVelY() {
-        double rawVelY = od.getVelY(DriveConstants.distanceUnit);
-        return applyMedianFilter(velYBuffer, rawVelY, velYArray);
+        return filteredVelY;
     }
 
     public double getFilteredHeadingVelocity(org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit unit) {
-        double rawHeadingVel = od.getHeadingVelocity(unit);
-        return applyMedianFilter(headingVelBuffer, rawHeadingVel, headingVelArray);
+        // 滤波值已在 periodic() 中以 RADIANS 单位计算
+        return filteredHeadingVel;
     }
 
     public boolean isMoving() {
-        return getFilteredHeadingVelocity(UnnormalizedAngleUnit.RADIANS) > DriveConstants.epsilonStopH ||
-        getFilteredVelX() > DriveConstants.epsilonStopXY || getFilteredVelY() > DriveConstants.epsilonStopXY;
+        return Math.abs(getFilteredHeadingVelocity(UnnormalizedAngleUnit.RADIANS)) > DriveConstants.epsilonStopH ||
+               Math.abs(getFilteredVelX()) > DriveConstants.epsilonStopXY ||
+               Math.abs(getFilteredVelY()) > DriveConstants.epsilonStopXY;
     }
 
     public void setScoring(boolean scoring) {
@@ -241,21 +256,23 @@ public class Drive extends SubsystemBase {
     }
 
     public Pose2D getExpectedPose(Alliance alliance) {
-        double filteredVelX = getFilteredVelX();
-        double filteredVelY = getFilteredVelY();
-        double filteredHeadingVel = getFilteredHeadingVelocity(
-                org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit.RADIANS);
-        if (!isMoving() || !scoring){
-            filteredVelX = 0;
-            filteredVelY = 0;
-            filteredHeadingVel = 0;
-        }
+        double velX = getFilteredVelX();
+        double velY = getFilteredVelY();
+        double headingVel = getFilteredHeadingVelocity(UnnormalizedAngleUnit.RADIANS);
+
+//        if (!isMoving() || !scoring) {
+//            velX = 0;
+//            velY = 0;
+//            headingVel = 0;
+//        }
+
+        double flyTime = getFlyTime(alliance);
 
         return new Pose2D(DriveConstants.distanceUnit,
-                getPose().getX(DriveConstants.distanceUnit) + filteredVelX * getFlyTime(alliance),
-                getPose().getY(DriveConstants.distanceUnit) + filteredVelY * getFlyTime(alliance),
+                getPose().getX(DriveConstants.distanceUnit) + velX * flyTime,
+                getPose().getY(DriveConstants.distanceUnit) + velY * flyTime,
                 DriveConstants.angleUnit,
-                getPose().getHeading(DriveConstants.angleUnit) + filteredHeadingVel * getFlyTime(alliance));
+                getPose().getHeading(DriveConstants.angleUnit));
     }
 
     public void setPose(Pose2D pose) {
@@ -269,6 +286,7 @@ public class Drive extends SubsystemBase {
     @Override
     public void periodic() {
         od.update();
+        updateFilteredVelocities();
 //        if (driveState == DriveState.STOP) {
 //            applyBrake();
 //        }

@@ -4,11 +4,13 @@ import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.ang
 import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.blueGoalPose;
 import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.distanceUnit;
 import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.farGoalDistance;
+import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.nearFlyTime;
 import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.nearGoalDistance;
 import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.redGoalPose;
 import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.fastVelocity;
 import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.slowVelocity;
 
+import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -104,5 +106,15 @@ public class Util {
             }
         }
         return closestIndex;
+    }
+
+    public static Pose2D followerExpectedPose(Follower follower) {
+        return new Pose2D(
+                distanceUnit,
+                follower.getPose().getX() + follower.getVelocity().getMagnitude() * Math.cos(follower.getVelocity().getTheta()) * nearFlyTime,
+                follower.getPose().getY() + follower.getVelocity().getMagnitude() * Math.sin(follower.getVelocity().getTheta()) * nearFlyTime,
+                angleUnit,
+                follower.getPose().getHeading()
+        );
     }
 }

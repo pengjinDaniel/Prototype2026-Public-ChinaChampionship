@@ -56,7 +56,7 @@ public class ShooterAlignCommand extends CommandBase {
                 goalInTurretSys = Util.goalInTurretSys(drive.getExpectedPose(alliance), alliance);
             }
             if (follower != null) {
-                goalInTurretSys = Util.goalInTurretSys(Util.PoseToPose2D(follower.getPose()), alliance);
+                goalInTurretSys = Util.goalInTurretSys(Util.followerExpectedPose(follower), alliance);
             }
 
             shooter.setDynamicSpeed(Util.getShooterVelocity(goalInTurretSys));

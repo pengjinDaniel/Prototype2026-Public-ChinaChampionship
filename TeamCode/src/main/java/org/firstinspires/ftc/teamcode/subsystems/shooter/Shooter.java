@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants
 import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.kF;
 import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.kI;
 import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.kP;
+import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.slowVelocity;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -21,6 +22,7 @@ public class Shooter extends SubsystemBase {
 
     private ShooterState shooterState = ShooterState.STOP;
     private PitchState pitchState = PitchState.LOW;
+    private ShooterLimitState shooterLimitState = ShooterLimitState.FAR;
 
     public Shooter(final HardwareMap hardwareMap) {
         leftShooter = hardwareMap.get(DcMotorEx.class, ShooterConstants.leftShooterName);
@@ -47,6 +49,13 @@ public class Shooter extends SubsystemBase {
         ShooterState(double shooterVelocity) {
             this.shooterVelocity = shooterVelocity;
         }
+    }
+
+    public enum ShooterLimitState {
+        NEAR(),
+        FAR();
+
+        ShooterLimitState() {}
     }
 
     public enum PitchState {
@@ -80,10 +89,13 @@ public class Shooter extends SubsystemBase {
         return shooterState;
     }
 
+    public void setShooterLimitState(ShooterLimitState shooterLimitState) {
+        this.shooterLimitState = shooterLimitState;
+    }
+
     public void setDynamicSpeed(double dynamicSpeed) {
         setShooterState(ShooterState.DYNAMIC);
-        shooterState.shooterVelocity =
-                clip(dynamicSpeed, ShooterConstants.minVelocity, ShooterConstants.maxVelocity);
+        shooterState.shooterVelocity = clip(dynamicSpeed, ShooterConstants.minVelocity, ShooterConstants.maxVelocity);
     }
 
     public double getVelocity() {
@@ -114,8 +126,15 @@ public class Shooter extends SubsystemBase {
         rightShooter.setVelocityPIDFCoefficients(kP, kI, kD, kF);
         leftShooter.setVelocityPIDFCoefficients(kP, kI, kD, kF);
 
-        rightShooter.setVelocity(-shooterState.shooterVelocity);
-        leftShooter.setVelocity(shooterState.shooterVelocity);
+        if (shooterLimitState == ShooterLimitState.NEAR) {
+            rightShooter.setVelocity(-Math.min(slowVelocity, shooterState.shooterVelocity));
+            leftShooter.setVelocity(Math.min(slowVelocity, shooterState.shooterVelocity));
+        }
+        else {
+            rightShooter.setVelocity(-shooterState.shooterVelocity);
+            leftShooter.setVelocity(shooterState.shooterVelocity);
+        }
+
         pitchServo.setPosition(pitchState.servoPos);
     }
 }

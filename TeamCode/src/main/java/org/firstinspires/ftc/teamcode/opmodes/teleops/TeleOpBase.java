@@ -55,43 +55,6 @@ public abstract class TeleOpBase extends CommandOpMode {
     public boolean killing = false;
 
     protected abstract Drive.Alliance getAlliance();
-    public FtcDashboard dashboard;
-
-    private void printPose() {
-        TelemetryPacket packet = new TelemetryPacket();
-        Pose2D pose = drive.getPose();
-
-        double x = pose.getX(distanceUnit);
-        double y = pose.getY(distanceUnit);
-        double heading = pose.getHeading(angleUnit);
-
-        double xDraw = 144 - x;
-        double yDraw = 144 - y;
-
-        double headingDraw = heading + Math.PI;
-
-        headingDraw = Math.atan2(Math.sin(headingDraw), Math.cos(headingDraw));
-
-        packet.put("x(raw)", x);
-        packet.put("y(raw)", y);
-        packet.put("heading(raw deg)", Math.toDegrees(heading));
-
-        packet.put("x(draw)", xDraw);
-        packet.put("y(draw)", yDraw);
-        packet.put("heading(draw deg)", Math.toDegrees(headingDraw));
-
-        packet.fieldOverlay().setFill("blue");
-        packet.fieldOverlay().fillCircle(xDraw, yDraw, 2.0);
-
-        double headingLength = 5.0;
-        double hx = xDraw + Math.cos(headingDraw) * headingLength;
-        double hy = yDraw + Math.sin(headingDraw) * headingLength;
-
-        packet.fieldOverlay().setStroke("red");
-        packet.fieldOverlay().strokeLine(xDraw, yDraw, hx, hy);
-
-        dashboard.sendTelemetryPacket(packet);
-    }
 
     @Override
     public void initialize() {
@@ -103,7 +66,6 @@ public abstract class TeleOpBase extends CommandOpMode {
         timer = new ElapsedTime();
         turret = new Turret(hardwareMap);
         vision = new Vision(hardwareMap);
-        dashboard = FtcDashboard.getInstance();
         timer.reset();
 
         new FunctionalButton(
@@ -146,12 +108,14 @@ public abstract class TeleOpBase extends CommandOpMode {
                 () -> gamepadEx1.getButton(GamepadKeys.Button.LEFT_BUMPER)
         ).whenPressed(
                 new InstantCommand(() -> shooter.setShooterState(Shooter.ShooterState.SLOW))
+                        .alongWith(new InstantCommand(() -> shooter.setShooterLimitState(Shooter.ShooterLimitState.NEAR)))
         );
 
         new FunctionalButton(
                 () -> gamepadEx1.getButton(GamepadKeys.Button.RIGHT_BUMPER)
         ).whenPressed(
                 new InstantCommand(() -> shooter.setShooterState(Shooter.ShooterState.FAST))
+                        .alongWith(new InstantCommand(() -> shooter.setShooterLimitState(Shooter.ShooterLimitState.FAR)))
         );
 
         new FunctionalButton(
@@ -184,8 +148,6 @@ public abstract class TeleOpBase extends CommandOpMode {
             lastTime = timer.milliseconds();
         }
 
-        printPose();
-
         telemetry.addLine("----- Drive -----");
         telemetry.addData("Drive X: ", drive.getPose().getX(distanceUnit));
         telemetry.addData("Drive Y: ",  drive.getPose().getY(distanceUnit));
@@ -193,8 +155,8 @@ public abstract class TeleOpBase extends CommandOpMode {
         telemetry.addData("Drive Aligned: ", drive.getAligned());
         telemetry.addData("Aligning: ", aligning);
         telemetry.addData("X Velocity", drive.getFilteredVelX());
-        telemetry.addData("X Velocity", drive.getFilteredVelY());
-        telemetry.addData("X Velocity", drive.getFilteredHeadingVelocity(UnnormalizedAngleUnit.RADIANS));
+        telemetry.addData("Y Velocity", drive.getFilteredVelY());
+        telemetry.addData("H Velocity", drive.getFilteredHeadingVelocity(UnnormalizedAngleUnit.RADIANS));
 
         telemetry.addLine("----- Vision -----");
         telemetry.addData("Vision X: ", vision.getVisionPose().getX(distanceUnit));

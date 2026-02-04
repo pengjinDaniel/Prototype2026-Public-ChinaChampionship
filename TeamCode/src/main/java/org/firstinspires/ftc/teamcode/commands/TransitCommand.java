@@ -13,7 +13,7 @@ public class TransitCommand extends CommandBase {
     private final Intake intake;
     private boolean hasOpened;
     private final ElapsedTime openTimer;
-    private static final double delay = 270;
+    private static final double delay = 0;
 
     public TransitCommand(Shooter shooter, Transit transit, Intake intake) {
         this.shooter = shooter;

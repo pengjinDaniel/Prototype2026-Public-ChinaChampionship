@@ -29,7 +29,7 @@ import org.firstinspires.ftc.teamcode.subsystems.transit.Transit;
 import org.firstinspires.ftc.teamcode.subsystems.turret.Turret;
 import org.firstinspires.ftc.teamcode.subsystems.vision.Vision;
 
-@Autonomous(name = "Red Far")
+@Autonomous(name = "Red Far", group = "Auto")
 public class RedFar extends CommandOpMode {
     private Follower follower;
     private Intake intake;

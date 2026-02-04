@@ -1,5 +1,10 @@
 package org.firstinspires.ftc.teamcode.opmodes.autos;
 
+import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.angleUnit;
+import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.distanceUnit;
+
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
@@ -15,6 +20,7 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.commands.AutoDriveCommand;
 import org.firstinspires.ftc.teamcode.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.ShootCommand;
@@ -29,7 +35,7 @@ import org.firstinspires.ftc.teamcode.subsystems.transit.Transit;
 import org.firstinspires.ftc.teamcode.subsystems.turret.Turret;
 import org.firstinspires.ftc.teamcode.subsystems.vision.Vision;
 
-@Autonomous(name = "Blue Far")
+@Autonomous(name = "Blue Far", group = "Auto")
 public class BlueFar extends CommandOpMode {
     private Follower follower;
     private Intake intake;
@@ -39,7 +45,9 @@ public class BlueFar extends CommandOpMode {
     private Vision vision;
     private Drive.Alliance alliance;
 
-    public PathChain Path1, Path2, Path3, Path4, Path5, Path6, Path7, Path8, Path9, Path10, Path11, Path12, Path13, Path14;
+    public PathChain Path1, Path2, Path3, Path4, Path5, Path6;
+
+    public FtcDashboard dashboard;
 
     public Command transitShootCommand() {
         return new SequentialCommandGroup(
@@ -82,6 +90,8 @@ public class BlueFar extends CommandOpMode {
         this.turret = new Turret(hardwareMap);
         this.vision = new Vision(hardwareMap);
         this.alliance = Drive.Alliance.BLUE;
+
+        this.dashboard = FtcDashboard.getInstance();
 
         follower.setStartingPose(new Pose(55.789, 7.527, Math.toRadians(180)));
 
@@ -168,14 +178,49 @@ public class BlueFar extends CommandOpMode {
         );
     }
 
+    private void printPose() {
+        TelemetryPacket packet = new TelemetryPacket();
+        Pose pose = follower.getPose();
+
+        double x = pose.getX();
+        double y = pose.getY();
+        double heading = pose.getHeading();
+
+        double xDraw = -72 + x;
+        double yDraw = -72 + y;
+
+        double headingDraw = heading + Math.PI;
+
+        headingDraw = Math.atan2(Math.sin(headingDraw), Math.cos(headingDraw));
+
+        packet.put("x(inch)", x);
+        packet.put("y(inch)", y);
+        packet.put("heading(deg)", Math.toDegrees(heading));
+
+        packet.fieldOverlay().setFill("blue");
+        packet.fieldOverlay().fillCircle(xDraw, yDraw, 2.0);
+
+        double headingLength = 5.0;
+        double hx = xDraw + Math.cos(headingDraw) * headingLength;
+        double hy = yDraw + Math.sin(headingDraw) * headingLength;
+
+        packet.fieldOverlay().setStroke("red");
+        packet.fieldOverlay().strokeLine(xDraw, yDraw, hx, hy);
+
+        dashboard.sendTelemetryPacket(packet);
+    }
+
     @Override
     public void run() {
         follower.update();
         CommandScheduler.getInstance().run();
+
         telemetry.addData("X", follower.getPose().getX());
         telemetry.addData("Y", follower.getPose().getY());
         telemetry.addData("Heading", follower.getPose().getHeading());
         telemetry.addData("Shooter at Setpoint: ", shooter.isShooterAtSetPoint());
         telemetry.update();
+
+        printPose();
     }
 }

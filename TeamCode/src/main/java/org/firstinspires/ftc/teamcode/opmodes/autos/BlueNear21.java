@@ -30,7 +30,7 @@ import org.firstinspires.ftc.teamcode.subsystems.transit.Transit;
 import org.firstinspires.ftc.teamcode.subsystems.turret.Turret;
 import org.firstinspires.ftc.teamcode.subsystems.vision.Vision;
 
-@Autonomous(name = "Blue Near 21")
+@Autonomous(name = "Blue Near 21", group = "Auto")
 public class BlueNear21 extends CommandOpMode {
     private Follower follower;
     private Intake intake;
@@ -227,8 +227,8 @@ public class BlueNear21 extends CommandOpMode {
                         new TurretAlignCommand(follower, turret, alliance, vision),
                         new ShooterAlignCommand(follower, shooter, transit, alliance),
                         new SequentialCommandGroup(
-                                new AutoDriveCommand(follower, Path1),
-                                transitShootCommand(),
+                                new AutoDriveCommand(follower, Path1)
+                                        .alongWith(transitShootCommand()),
                                 intakeCommand(Path2),
                                 intakeCommand(Path3),
                                 intakeCommand(Path4),

@@ -32,7 +32,7 @@ public class DriveConstants {
     public static double kP_brakeH = -0.8;
     public static double epsilonStopXY = 5;
     public static double epsilonStopH = 0.5;
-    public static double speedLimit = 0.7;
+    public static double speedLimit = 1;
 
     public static double xNearPoseRed = 80, yNearPoseRed = 91;
 //    public static double xNearPoseBlue = 64, yNearPoseBlue = 91;
@@ -91,8 +91,8 @@ public class DriveConstants {
     public static ArrayList<Double> poseList = new ArrayList<>(List.of(near1Distance, near2Distance,
             near3Distance, near4Distance, near5Distance, far1Distance, far2Distance));
 
-    public static double nearFlyTime = 0.58;
-    public static double farFlyTime = 0.58;
+    public static double nearFlyTime = 0.7;
+    public static double farFlyTime = 0.7;
 
     public static Pose2D autoEndPose = new Pose2D(DistanceUnit.INCH, 0, 0, AngleUnit.RADIANS, 0);
 }

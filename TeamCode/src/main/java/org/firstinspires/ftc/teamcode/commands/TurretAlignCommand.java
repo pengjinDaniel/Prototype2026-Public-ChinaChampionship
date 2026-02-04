@@ -61,7 +61,7 @@ public class TurretAlignCommand extends CommandBase {
             }
             else if (follower != null){
 //                turret.setPIDF(kP, kI, kD, kF);
-                PolarVector goalInTurretSys = Util.goalInTurretSys(Util.PoseToPose2D(follower.getPose()), alliance);
+                PolarVector goalInTurretSys = Util.goalInTurretSys(Util.followerExpectedPose(follower), alliance);
                 turret.setTurret(goalInTurretSys.getHeading(DriveConstants.angleUnit));
             }
         }

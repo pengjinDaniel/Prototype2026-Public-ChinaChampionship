@@ -30,7 +30,7 @@ import org.firstinspires.ftc.teamcode.subsystems.transit.Transit;
 import org.firstinspires.ftc.teamcode.subsystems.turret.Turret;
 import org.firstinspires.ftc.teamcode.subsystems.vision.Vision;
 
-@Autonomous(name = "Red Near Gates")
+@Autonomous(name = "Red Near Gates", group = "Auto")
 public class RedNearGates extends CommandOpMode {
     private Follower follower;
     private Intake intake;
