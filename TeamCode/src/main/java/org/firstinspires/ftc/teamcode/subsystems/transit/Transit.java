@@ -13,7 +13,7 @@ public class Transit extends SubsystemBase {
         limitServo = hardwareMap.get(Servo.class, TransitConstants.transitServoName);
     }
 
-    public enum TransitState {
+    public static enum TransitState {
         CLOSE(TransitConstants.transitServoClosePos),
         OPEN(TransitConstants.transitServoOpenPos);
 
@@ -27,6 +27,10 @@ public class Transit extends SubsystemBase {
 
     public void setState(TransitState transitState) {
         this.transitState = transitState;
+    }
+
+    public TransitState getState() {
+        return this.transitState;
     }
 
     @Override

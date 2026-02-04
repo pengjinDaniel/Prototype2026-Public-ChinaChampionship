@@ -110,8 +110,8 @@ public abstract class TeleOpBase extends CommandOpMode {
         );
 
         drive.setDefaultCommand(new DriveCommand(drive, gamepadEx1));
-        turret.setDefaultCommand(new TurretAlignCommand(drive, turret, getAlliance(), vision, () -> false));
-        shooter.setDefaultCommand(new ShooterAlignCommand(drive, shooter, getAlliance(), () -> false));
+        turret.setDefaultCommand(new TurretAlignCommand(drive, turret, getAlliance(), vision, () -> gamepadEx1.getButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)));
+        shooter.setDefaultCommand(new ShooterAlignCommand(drive, shooter, transit, getAlliance(), () -> gamepadEx1.getButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)));
 
         new FunctionalButton(
                 () -> gamepadEx1.getButton(GamepadKeys.Button.LEFT_STICK_BUTTON)
@@ -151,6 +151,18 @@ public abstract class TeleOpBase extends CommandOpMode {
                 new InstantCommand(() -> intake.setIntakeState(Intake.IntakeState.REVERSED))
         ).whenReleased(
                 new InstantCommand(() -> intake.setIntakeState(Intake.IntakeState.STOP))
+        );
+
+        new FunctionalButton(
+                () -> gamepadEx1.getButton(GamepadKeys.Button.DPAD_LEFT)
+        ).whenPressed(
+                new InstantCommand(() -> turret.modify(-2000))
+        );
+
+        new FunctionalButton(
+                () -> gamepadEx1.getButton(GamepadKeys.Button.DPAD_RIGHT)
+        ).whenPressed(
+                new InstantCommand(() -> turret.modify(2000))
         );
     }
 

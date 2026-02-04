@@ -50,7 +50,8 @@ public class BlueNearGates extends CommandOpMode {
                         new TransitCommand(shooter, transit)
                                 .andThen(new WaitCommand(200))
                                 .andThen(new ShootCommand(intake, shooter))
-                )
+                ),
+                new InstantCommand(() -> intake.setIntakeState(Intake.IntakeState.STOP))
         );
     }
 
@@ -58,7 +59,7 @@ public class BlueNearGates extends CommandOpMode {
         return new ParallelRaceGroup(
                 new AutoDriveCommand(follower, path),
                 new IntakeCommand(intake, transit)
-        );
+        ).andThen(new InstantCommand(() -> intake.setIntakeState(Intake.IntakeState.STOP)));
     }
 
     @Override
@@ -206,7 +207,7 @@ public class BlueNearGates extends CommandOpMode {
         schedule(
                 new ParallelCommandGroup(
                         new TurretAlignCommand(follower, turret, alliance, vision),
-                        new ShooterAlignCommand(follower, shooter, alliance, () -> false),
+                        new ShooterAlignCommand(follower, shooter, transit, alliance),
                         new SequentialCommandGroup(
                                 new AutoDriveCommand(follower, Path1),
                                 transitShootCommand(),

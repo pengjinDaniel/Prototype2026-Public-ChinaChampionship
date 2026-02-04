@@ -1,21 +1,14 @@
 package org.firstinspires.ftc.teamcode.subsystems.shooter;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.fastVelocity;
 import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.kD;
 import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.kF;
 import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.kI;
 import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.kP;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.command.SubsystemBase;
-import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.utils.Util;
@@ -112,8 +105,8 @@ public class Shooter extends SubsystemBase {
         rightShooter.setVelocityPIDFCoefficients(kP, kI, kD, kF);
         leftShooter.setVelocityPIDFCoefficients(kP, kI, kD, kF);
 
-        rightShooter.setVelocity(-Math.min(shooterState.shooterVelocity, fastVelocity));
-        leftShooter.setVelocity(Math.min(shooterState.shooterVelocity, fastVelocity));
+        rightShooter.setVelocity(-shooterState.shooterVelocity);
+        leftShooter.setVelocity(shooterState.shooterVelocity);
         pitchServo.setPosition(pitchState.servoPos);
     }
 }

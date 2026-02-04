@@ -49,7 +49,8 @@ public class BlueFar extends CommandOpMode {
                         new TransitCommand(shooter, transit)
                                 .andThen(new WaitCommand(200))
                                 .andThen(new ShootCommand(intake, shooter))
-                )
+                ),
+                new InstantCommand(() -> intake.setIntakeState(Intake.IntakeState.STOP))
         );
     }
 
@@ -57,7 +58,7 @@ public class BlueFar extends CommandOpMode {
         return new ParallelRaceGroup(
                 new AutoDriveCommand(follower, path),
                 new IntakeCommand(intake, transit)
-        ).alongWith(new InstantCommand(() -> intake.setIntakeState(Intake.IntakeState.STOP)));
+        ).andThen(new InstantCommand(() -> intake.setIntakeState(Intake.IntakeState.STOP)));
     }
 
     public Command cycleCommand() {
@@ -147,7 +148,7 @@ public class BlueFar extends CommandOpMode {
         schedule(
                 new ParallelCommandGroup(
                         new TurretAlignCommand(follower, turret, alliance, vision),
-                        new ShooterAlignCommand(follower, shooter, alliance, () -> false),
+                        new ShooterAlignCommand(follower, shooter, transit, alliance),
                         new SequentialCommandGroup(
                                 new AutoDriveCommand(follower, Path1),
                                 new WaitCommand(1500),

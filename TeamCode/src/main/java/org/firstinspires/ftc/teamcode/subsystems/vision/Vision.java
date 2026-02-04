@@ -35,8 +35,6 @@ public class Vision extends SubsystemBase {
         List<LLResultTypes.FiducialResult> fiducialResults = limelight.getLatestResult().getFiducialResults();
         if (fiducialResults == null) return null;
         if (fiducialResults.isEmpty()) return null;
-        if (fiducialResults.get(0).getFiducialId() != 20 &&
-                fiducialResults.get(0).getFiducialId() != 24) return null;
         return fiducialResults.get(0);
     }
 

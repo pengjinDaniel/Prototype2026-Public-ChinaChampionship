@@ -13,6 +13,7 @@ public class Turret extends SubsystemBase {
     private PIDFController pidfController;
     private DcMotor turretMotor;
     private int ticksSetpoint; // In ticks
+    private int killedSetpoint;
     private double normalizedSetpoint; // In the range [-PI, PI]
 
     public Turret(HardwareMap hardwareMap) {
@@ -22,6 +23,7 @@ public class Turret extends SubsystemBase {
         );
         this.turretState = TurretState.INIT;
         normalizedSetpoint = TurretConstants.initPos;
+        killedSetpoint = 0;
     }
 
     public enum TurretState {
@@ -31,9 +33,13 @@ public class Turret extends SubsystemBase {
         TurretState() {}
     }
 
-    public boolean isAligned(){
+    public boolean isAligned() {
         return Util.epsilonEqual(turretMotor.getCurrentPosition()
                 , ticksSetpoint, TurretConstants.alignEpsilon);
+    }
+
+    public void modify(double ticks) {
+        killedSetpoint += ticks;
     }
 
     public void setTurretState(TurretState turretState) {
@@ -73,6 +79,10 @@ public class Turret extends SubsystemBase {
         if (turretState == TurretState.ACTIVE) {
             turretMotor.setPower(pidfController.calculate(
                     turretMotor.getCurrentPosition(), ticksSetpoint));
+        }
+        if (turretState == TurretState.INIT) {
+            turretMotor.setPower(pidfController.calculate(
+                    turretMotor.getCurrentPosition(), killedSetpoint));
         }
     }
 }
