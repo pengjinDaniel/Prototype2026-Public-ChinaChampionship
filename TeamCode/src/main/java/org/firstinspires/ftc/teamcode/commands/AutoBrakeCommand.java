@@ -43,7 +43,6 @@ public class AutoBrakeCommand extends CommandBase {
 
     @Override
     public void execute() {
-        follower.update();
         follower.breakFollowing();
         holdPath = follower.pathBuilder()
                 .addPath(

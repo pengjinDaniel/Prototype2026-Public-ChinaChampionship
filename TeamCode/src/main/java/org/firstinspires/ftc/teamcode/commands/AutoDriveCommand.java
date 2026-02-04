@@ -21,7 +21,7 @@ public class AutoDriveCommand extends CommandBase {
         nextPath = null;
     }
 
-    public AutoDriveCommand(Follower follower, PathChain pathChain, double waitTime, PathChain nextPath) {
+    public AutoDriveCommand(Follower follower, PathChain pathChain, double waitTime) {
         this.follower = follower;
         this.pathChain = pathChain;
         this.waitTime = waitTime;
@@ -36,26 +36,12 @@ public class AutoDriveCommand extends CommandBase {
     }
 
     @Override
-    public void execute() {
-        follower.update();
+    public void end(boolean interrupted) {
+        follower.breakFollowing();
     }
-
-//    @Override
-//    public void end(boolean interrupted) {
-//        follower.breakFollowing();
-//    }
 
     @Override
     public boolean isFinished() {
-        if (timer.milliseconds() >= waitTime && nextPath != null) {
-            nextPath = follower
-                    .pathBuilder()
-                    .addPath(
-                            new BezierLine(follower.getPose(), nextPath.endPose())
-                    )
-                    .setLinearHeadingInterpolation(follower.getHeading(), nextPath.endPose().getHeading())
-                    .build();
-        }
         return !follower.isBusy() || timer.milliseconds() >= waitTime;
     }
 }

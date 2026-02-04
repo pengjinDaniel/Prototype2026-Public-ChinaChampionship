@@ -170,6 +170,7 @@ public class BlueFar extends CommandOpMode {
 
     @Override
     public void run() {
+        follower.update();
         CommandScheduler.getInstance().run();
         telemetry.addData("X", follower.getPose().getX());
         telemetry.addData("Y", follower.getPose().getY());

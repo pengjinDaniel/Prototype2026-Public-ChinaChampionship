@@ -62,9 +62,9 @@ public class RedNear21 extends CommandOpMode {
         ).andThen(new InstantCommand(() -> intake.setIntakeState(Intake.IntakeState.STOP)));
     }
 
-    public Command intakeTimedCommand(PathChain path, PathChain nextPath, double time) {
+    public Command intakeTimedCommand(PathChain path, double time) {
         return new ParallelRaceGroup(
-                new AutoDriveCommand(follower, path, time, nextPath),
+                new AutoDriveCommand(follower, path, time),
                 new IntakeCommand(intake, transit)
         ).andThen(new InstantCommand(() -> intake.setIntakeState(Intake.IntakeState.STOP)));
     }
@@ -232,8 +232,8 @@ public class RedNear21 extends CommandOpMode {
                                 intakeCommand(Path3),
                                 intakeCommand(Path4),
                                 transitShootCommand(),
-                                intakeTimedCommand(Path5, Path6, 1500),
-                                intakeTimedCommand(Path6, Path7, 500),
+                                intakeTimedCommand(Path5, 1500),
+                                intakeTimedCommand(Path6, 500),
                                 new ParallelDeadlineGroup(
                                         new WaitCommand(750),
                                         new IntakeCommand(intake, transit)
@@ -256,6 +256,7 @@ public class RedNear21 extends CommandOpMode {
 
     @Override
     public void run() {
+        follower.update();
         CommandScheduler.getInstance().run();
         telemetry.addData("X", follower.getPose().getX());
         telemetry.addData("Y", follower.getPose().getY());
