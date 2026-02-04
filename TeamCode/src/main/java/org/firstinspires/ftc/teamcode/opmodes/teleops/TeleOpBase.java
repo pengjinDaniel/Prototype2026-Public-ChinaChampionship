@@ -20,6 +20,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 import org.firstinspires.ftc.teamcode.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.DriveCommand;
 import org.firstinspires.ftc.teamcode.commands.ShootCommand;
@@ -102,6 +103,7 @@ public abstract class TeleOpBase extends CommandOpMode {
         vision = new Vision(hardwareMap);
         dashboard = FtcDashboard.getInstance();
         timer.reset();
+        GamepadKeys.Trigger transitButton = GamepadKeys.Trigger.RIGHT_TRIGGER;
 
         new FunctionalButton(
                 () -> timer.time(TimeUnit.SECONDS) == 90
@@ -109,7 +111,7 @@ public abstract class TeleOpBase extends CommandOpMode {
                 new InstantCommand(() -> gamepad1.rumble(1.0, 1.0, 800))
         );
 
-        drive.setDefaultCommand(new DriveCommand(drive, gamepadEx1));
+        drive.setDefaultCommand(new DriveCommand(drive, gamepadEx1, transitButton));
         turret.setDefaultCommand(new TurretAlignCommand(drive, turret, getAlliance(), vision, () -> gamepadEx1.getButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)));
         shooter.setDefaultCommand(new ShooterAlignCommand(drive, shooter, transit, getAlliance(), () -> gamepadEx1.getButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)));
 
@@ -126,11 +128,9 @@ public abstract class TeleOpBase extends CommandOpMode {
         );
 
         new FunctionalButton(
-                () -> gamepadEx1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) >= 0.5
+                () -> gamepadEx1.getTrigger(transitButton) >= 0.5
         ).whenHeld(
-                new TransitCommand(shooter, transit)
-                        .andThen(new WaitCommand(200))
-                        .andThen(new ShootCommand(intake, shooter))
+                new TransitCommand(shooter, transit, intake)
         ).whenReleased(new InstantCommand(() -> intake.setIntakeState(Intake.IntakeState.STOP)));
 
         new FunctionalButton(
@@ -182,6 +182,9 @@ public abstract class TeleOpBase extends CommandOpMode {
         telemetry.addData("Drive H: ", drive.getPose().getHeading(angleUnit));
         telemetry.addData("Drive Aligned: ", drive.getAligned());
         telemetry.addData("Aligning: ", aligning);
+        telemetry.addData("X Velocity", drive.getFilteredVelX());
+        telemetry.addData("X Velocity", drive.getFilteredVelY());
+        telemetry.addData("X Velocity", drive.getFilteredHeadingVelocity(UnnormalizedAngleUnit.RADIANS));
 
         telemetry.addLine("----- Vision -----");
         telemetry.addData("Vision X: ", vision.getVisionPose().getX(distanceUnit));

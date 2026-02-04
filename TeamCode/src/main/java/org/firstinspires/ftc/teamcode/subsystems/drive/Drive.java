@@ -21,10 +21,12 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
-import org.firstinspires.ftc.teamcode.subsystems.vision.Vision;
 import org.firstinspires.ftc.teamcode.utils.Util;
+
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
 
 @Config
 public class Drive extends SubsystemBase {
@@ -32,12 +34,21 @@ public class Drive extends SubsystemBase {
 
     private final GoBildaPinpointDriver od;
     private double yawOffset;// mm
-    private Alliance alliance;
+    private final Alliance alliance;
     private DriveState driveState;
     private Telemetry telemetry;
     private boolean aligned;
+    private double speedLimit;
 
     Pose2D lastPose;
+
+    private static final int MEDIAN_FILTER_SIZE = 20;
+    private final Queue<Double> velXBuffer = new LinkedList<>();
+    private final Queue<Double> velYBuffer = new LinkedList<>();
+    private final Queue<Double> headingVelBuffer = new LinkedList<>();
+    private final double[] velXArray = new double[MEDIAN_FILTER_SIZE];
+    private final double[] velYArray = new double[MEDIAN_FILTER_SIZE];
+    private final double[] headingVelArray = new double[MEDIAN_FILTER_SIZE];
 
     public enum DriveState {
         STOP,
@@ -79,6 +90,55 @@ public class Drive extends SubsystemBase {
 
         lastPose = new Pose2D(DriveConstants.distanceUnit, 0, 0, DriveConstants.angleUnit, 0);
         aligned = false;
+        this.speedLimit = 1;
+
+        initializeFilterBuffers();
+    }
+
+    private void initializeFilterBuffers() {
+        for (int i = 0; i < MEDIAN_FILTER_SIZE; i++) {
+            velXBuffer.add(0.0);
+            velYBuffer.add(0.0);
+            headingVelBuffer.add(0.0);
+        }
+    }
+
+    private double applyMedianFilter(Queue<Double> buffer, double newValue, double[] array) {
+        buffer.poll();
+        buffer.add(newValue);
+
+        int index = 0;
+        for (Double value : buffer) {
+            array[index++] = value;
+        }
+
+        Arrays.sort(array);
+
+        return array[MEDIAN_FILTER_SIZE / 2];
+    }
+
+    public double getFilteredVelX() {
+        double rawVelX = od.getVelX(DriveConstants.distanceUnit);
+        return applyMedianFilter(velXBuffer, rawVelX, velXArray);
+    }
+
+    public double getFilteredVelY() {
+        double rawVelY = od.getVelY(DriveConstants.distanceUnit);
+        return applyMedianFilter(velYBuffer, rawVelY, velYArray);
+    }
+
+    public double getFilteredHeadingVelocity(org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit unit) {
+        double rawHeadingVel = od.getHeadingVelocity(unit);
+        return applyMedianFilter(headingVelBuffer, rawHeadingVel, headingVelArray);
+    }
+
+    public boolean isMoving() {
+        return getFilteredHeadingVelocity(UnnormalizedAngleUnit.RADIANS) > DriveConstants.epsilonStopH ||
+        getFilteredVelX() > DriveConstants.epsilonStopXY || getFilteredVelY() > DriveConstants.epsilonStopXY;
+    }
+
+    public void setSpeedLimit(double speedLimit) {
+        this.speedLimit = speedLimit;
     }
 
     public void stop() {
@@ -123,15 +183,15 @@ public class Drive extends SubsystemBase {
         double rightFrontPower = (rotY - rotX - turn) / denominator;
         double rightBackPower = (rotY + rotX - turn) / denominator;
 
-        leftFrontMotor.setPower(leftFrontPower);
-        leftBackMotor.setPower(leftBackPower);
-        rightFrontMotor.setPower(rightFrontPower);
-        rightBackMotor.setPower(rightBackPower);
+        leftFrontMotor.setPower(leftFrontPower * speedLimit);
+        leftBackMotor.setPower(leftBackPower * speedLimit);
+        rightFrontMotor.setPower(rightFrontPower * speedLimit);
+        rightBackMotor.setPower(rightBackPower * speedLimit);
     }
 
     public void moveRobot(double forward, double fun, double turn) {
         double rotX = fun * strafingBalance; // Counteract imperfect strafing
-        double rotY = forward;
+        double rotY = forward * 1;
 
         // Denominator is the largest motor power (absolute value) or 1
         // This ensures all the powers maintain the same ratio,
@@ -142,10 +202,10 @@ public class Drive extends SubsystemBase {
         double rightFrontPower = (rotY - rotX - turn) / denominator;
         double rightBackPower = (rotY + rotX - turn) / denominator;
 
-        leftFrontMotor.setPower(leftFrontPower);
-        leftBackMotor.setPower(leftBackPower);
-        rightFrontMotor.setPower(rightFrontPower);
-        rightBackMotor.setPower(rightBackPower);
+        leftFrontMotor.setPower(leftFrontPower * speedLimit);
+        leftBackMotor.setPower(leftBackPower * speedLimit);
+        rightFrontMotor.setPower(rightFrontPower * speedLimit);
+        rightBackMotor.setPower(rightBackPower * speedLimit);
     }
 
     public Pose2D getPose() {
@@ -178,11 +238,21 @@ public class Drive extends SubsystemBase {
     }
 
     public Pose2D getExpectedPose(Alliance alliance) {
-        return new Pose2D(DriveConstants.distanceUnit, getPose().getX(DriveConstants.distanceUnit)
-                + od.getVelX(DriveConstants.distanceUnit) * getFlyTime(alliance), getPose().getY(
-                        DriveConstants.distanceUnit) + od.getVelY(DriveConstants.distanceUnit)
-                * getFlyTime(alliance), DriveConstants.angleUnit, getPose().getHeading(DriveConstants.angleUnit)
-                + od.getHeadingVelocity(UnnormalizedAngleUnit.RADIANS) * getFlyTime(alliance));
+        double filteredVelX = getFilteredVelX();
+        double filteredVelY = getFilteredVelY();
+        double filteredHeadingVel = getFilteredHeadingVelocity(
+                org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit.RADIANS);
+        if (!isMoving()){
+            filteredVelX = 0;
+            filteredVelY = 0;
+            filteredHeadingVel = 0;
+        }
+
+        return new Pose2D(DriveConstants.distanceUnit,
+                getPose().getX(DriveConstants.distanceUnit) + filteredVelX * getFlyTime(alliance),
+                getPose().getY(DriveConstants.distanceUnit) + filteredVelY * getFlyTime(alliance),
+                DriveConstants.angleUnit,
+                getPose().getHeading(DriveConstants.angleUnit) + filteredHeadingVel * getFlyTime(alliance));
     }
 
     public void setPose(Pose2D pose) {

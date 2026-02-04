@@ -47,7 +47,7 @@ public class BlueNear21 extends CommandOpMode {
                 new InstantCommand(() -> vision.autoCalibrate(follower, turret)),
                 new ParallelDeadlineGroup(
                         new WaitCommand(1900),
-                        new TransitCommand(shooter, transit)
+                        new TransitCommand(shooter, transit, intake)
                                 .andThen(new WaitCommand(150))
                                 .andThen(new ShootCommand(intake, shooter))
                 ),

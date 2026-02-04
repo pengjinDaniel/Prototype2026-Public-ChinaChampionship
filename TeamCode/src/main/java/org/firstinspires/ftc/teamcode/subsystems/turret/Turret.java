@@ -61,6 +61,10 @@ public class Turret extends SubsystemBase {
         return ticksSetpoint;
     }
 
+    public void setPIDF(double p, double i, double d, double f) {
+        pidfController.setPIDF(p, i, d, f);
+    }
+
     @Override
     public void periodic() {
         if (Math.abs(normalizedSetpoint - Units.ticksToRadians(

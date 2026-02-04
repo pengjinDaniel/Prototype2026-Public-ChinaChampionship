@@ -47,7 +47,7 @@ public class BlueNearGates extends CommandOpMode {
                 new InstantCommand(() -> vision.autoCalibrate(follower, turret)),
                 new ParallelDeadlineGroup(
                         new WaitCommand(2500),
-                        new TransitCommand(shooter, transit)
+                        new TransitCommand(shooter, transit, intake)
                                 .andThen(new WaitCommand(200))
                                 .andThen(new ShootCommand(intake, shooter))
                 ),

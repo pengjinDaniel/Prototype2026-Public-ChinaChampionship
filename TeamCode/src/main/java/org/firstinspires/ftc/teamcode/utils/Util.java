@@ -17,10 +17,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.subsystems.drive.Drive;
 import org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants;
-import org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants;
 import org.firstinspires.ftc.teamcode.subsystems.turret.Turret;
 import org.firstinspires.ftc.teamcode.subsystems.turret.TurretConstants;
-import org.firstinspires.ftc.teamcode.subsystems.vision.Vision;
+
+import java.util.ArrayList;
 
 public class Util {
     public static Pose Pose2DToPose(Pose2D pose2D) {
@@ -91,5 +91,18 @@ public class Util {
         double driveH = turretPose.getHeading(angleUnit) - Units.ticksToRadians(turret.getTurretPos());
         return new Pose2D(distanceUnit, Math.cos(driveH) * TurretConstants.offsetToRobot + turretPose.getX(distanceUnit),
                 Math.sin(driveH) * TurretConstants.offsetToRobot + turretPose.getY(distanceUnit), angleUnit, driveH);
+    }
+
+    public static int findClosestIndex(double target, ArrayList<Double> tagetList) {
+        if (tagetList == null || tagetList.isEmpty()) {
+            return  -1;
+        }
+        int closestIndex = 0;
+        for (int i = 1; i < tagetList.size(); i++) {
+            if (Math.abs(tagetList.get(i) - target) < Math.abs(tagetList.get(closestIndex) - target)) {
+                closestIndex = i;
+            }
+        }
+        return closestIndex;
     }
 }

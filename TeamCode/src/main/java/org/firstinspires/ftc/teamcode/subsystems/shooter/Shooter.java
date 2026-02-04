@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems.shooter;
 
+import static com.qualcomm.robotcore.util.Range.clip;
 import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.kD;
 import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.kF;
 import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.kI;
@@ -51,7 +52,14 @@ public class Shooter extends SubsystemBase {
     public enum PitchState {
         HIGH(ShooterConstants.highPose),
         MIDDLE(ShooterConstants.middlePose),
-        LOW(ShooterConstants.lowPose);
+        LOW(ShooterConstants.lowPose),
+        NEAR1(ShooterConstants.near1Pose),
+        NEAR2(ShooterConstants.near2Pose),
+        NEAR3(ShooterConstants.near3Pose),
+        NEAR4(ShooterConstants.near4Pose),
+        NEAR5(ShooterConstants.near5Pose),
+        FAR1(ShooterConstants.far1Pose),
+        FAR2(ShooterConstants.far2Pose);
 
         final double servoPos;
 
@@ -74,7 +82,8 @@ public class Shooter extends SubsystemBase {
 
     public void setDynamicSpeed(double dynamicSpeed) {
         setShooterState(ShooterState.DYNAMIC);
-        shooterState.shooterVelocity = dynamicSpeed;
+        shooterState.shooterVelocity =
+                clip(dynamicSpeed, ShooterConstants.minVelocity, ShooterConstants.maxVelocity);
     }
 
     public double getVelocity() {
@@ -92,15 +101,15 @@ public class Shooter extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (shooterState == ShooterState.STOP) {
-            setPitchState(PitchState.LOW);
-        }
-        if (shooterState == ShooterState.SLOW) {
-            setPitchState(PitchState.MIDDLE);
-        }
-        if (shooterState == ShooterState.FAST) {
-            setPitchState(PitchState.HIGH);
-        }
+//        if (shooterState == ShooterState.STOP) {
+//            setPitchState(PitchState.LOW);
+//        }
+//        if (shooterState == ShooterState.SLOW) {
+//            setPitchState(PitchState.MIDDLE);
+//        }
+//        if (shooterState == ShooterState.FAST) {
+//            setPitchState(PitchState.HIGH);
+//        }
 
         rightShooter.setVelocityPIDFCoefficients(kP, kI, kD, kF);
         leftShooter.setVelocityPIDFCoefficients(kP, kI, kD, kF);
