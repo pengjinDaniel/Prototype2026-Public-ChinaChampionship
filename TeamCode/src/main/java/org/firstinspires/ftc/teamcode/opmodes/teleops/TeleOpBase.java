@@ -10,6 +10,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -51,6 +52,7 @@ public abstract class TeleOpBase extends CommandOpMode {
     public ElapsedTime timer;
     public boolean aligning = false;
     public double lastTime = 0;
+    public boolean killing = false;
 
     protected abstract Drive.Alliance getAlliance();
     public FtcDashboard dashboard;
@@ -103,7 +105,6 @@ public abstract class TeleOpBase extends CommandOpMode {
         vision = new Vision(hardwareMap);
         dashboard = FtcDashboard.getInstance();
         timer.reset();
-        GamepadKeys.Trigger transitButton = GamepadKeys.Trigger.RIGHT_TRIGGER;
 
         new FunctionalButton(
                 () -> timer.time(TimeUnit.SECONDS) == 90
@@ -111,7 +112,7 @@ public abstract class TeleOpBase extends CommandOpMode {
                 new InstantCommand(() -> gamepad1.rumble(1.0, 1.0, 800))
         );
 
-        drive.setDefaultCommand(new DriveCommand(drive, gamepadEx1, transitButton));
+        drive.setDefaultCommand(new DriveCommand(drive, gamepadEx1));
         turret.setDefaultCommand(new TurretAlignCommand(drive, turret, getAlliance(), vision, () -> gamepadEx1.getButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)));
         shooter.setDefaultCommand(new ShooterAlignCommand(drive, shooter, transit, getAlliance(), () -> gamepadEx1.getButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)));
 
@@ -128,10 +129,18 @@ public abstract class TeleOpBase extends CommandOpMode {
         );
 
         new FunctionalButton(
-                () -> gamepadEx1.getTrigger(transitButton) >= 0.5
+                () -> gamepadEx1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) >= 0.5
         ).whenHeld(
-                new TransitCommand(shooter, transit, intake)
-        ).whenReleased(new InstantCommand(() -> intake.setIntakeState(Intake.IntakeState.STOP)));
+                new ParallelCommandGroup(
+                        new InstantCommand(() -> drive.setScoring(true)),
+                        new TransitCommand(shooter, transit, intake)
+                )
+        ).whenReleased(
+                new ParallelCommandGroup(
+                        new InstantCommand(() -> drive.setScoring(false)),
+                        new InstantCommand(() -> intake.setIntakeState(Intake.IntakeState.STOP))
+                )
+        );
 
         new FunctionalButton(
                 () -> gamepadEx1.getButton(GamepadKeys.Button.LEFT_BUMPER)
@@ -168,8 +177,9 @@ public abstract class TeleOpBase extends CommandOpMode {
 
     @Override
     public void run() {
+        killing = gamepadEx1.getButton(GamepadKeys.Button.RIGHT_STICK_BUTTON) || killing;
         CommandScheduler.getInstance().run();
-        if (timer.milliseconds() - lastTime > 500) {
+        if (timer.milliseconds() - lastTime > 500 && !killing) {
             aligning = vision.calibrate(drive, turret);
             lastTime = timer.milliseconds();
         }

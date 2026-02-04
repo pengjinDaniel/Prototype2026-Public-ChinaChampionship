@@ -9,22 +9,15 @@ import org.firstinspires.ftc.teamcode.subsystems.drive.Drive;
 public class DriveCommand extends CommandBase {
     private final Drive drive;
     private final GamepadEx gamepadEx;
-    private final GamepadKeys.Trigger transitButton;
 
-    public DriveCommand(Drive drive, GamepadEx gamepadEx, GamepadKeys.Trigger transitButton) {
+    public DriveCommand(Drive drive, GamepadEx gamepadEx) {
         this.drive = drive;
         this.gamepadEx = gamepadEx;
-        this.transitButton = transitButton;
         addRequirements(drive);
     }
 
     @Override
     public void execute() {
-        if (gamepadEx.getTrigger(transitButton) >= 0.5) {
-            drive.setSpeedLimit(0.5);
-        }
-        else drive.setSpeedLimit(1);
-
     if (Math.abs(gamepadEx.getLeftX()) > 0.03 ||
                 Math.abs(gamepadEx.getLeftY()) > 0.03 ||
                 Math.abs(gamepadEx.getRightX()) > 0.03) {

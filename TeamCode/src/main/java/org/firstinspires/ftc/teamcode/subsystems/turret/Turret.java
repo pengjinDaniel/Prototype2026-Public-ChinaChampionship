@@ -38,7 +38,7 @@ public class Turret extends SubsystemBase {
                 , ticksSetpoint, TurretConstants.alignEpsilon);
     }
 
-    public void modify(double ticks) {
+    public void modify(int ticks) {
         killedSetpoint += ticks;
     }
 

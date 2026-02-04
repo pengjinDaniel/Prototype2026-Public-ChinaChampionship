@@ -8,6 +8,7 @@ import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.kP_
 import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.kP_brakeXY;
 import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.nearFlyTime;
 import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.nearGoalDistance;
+import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.speedLimit;
 import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.strafingBalance;
 import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.xPoseDW;
 import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.yPoseDW;
@@ -38,11 +39,11 @@ public class Drive extends SubsystemBase {
     private DriveState driveState;
     private Telemetry telemetry;
     private boolean aligned;
-    private double speedLimit;
+    private boolean scoring;
 
     Pose2D lastPose;
 
-    private static final int MEDIAN_FILTER_SIZE = 20;
+    private static final int MEDIAN_FILTER_SIZE = 10;
     private final Queue<Double> velXBuffer = new LinkedList<>();
     private final Queue<Double> velYBuffer = new LinkedList<>();
     private final Queue<Double> headingVelBuffer = new LinkedList<>();
@@ -90,7 +91,7 @@ public class Drive extends SubsystemBase {
 
         lastPose = new Pose2D(DriveConstants.distanceUnit, 0, 0, DriveConstants.angleUnit, 0);
         aligned = false;
-        this.speedLimit = 1;
+        this.scoring = false;
 
         initializeFilterBuffers();
     }
@@ -137,8 +138,8 @@ public class Drive extends SubsystemBase {
         getFilteredVelX() > DriveConstants.epsilonStopXY || getFilteredVelY() > DriveConstants.epsilonStopXY;
     }
 
-    public void setSpeedLimit(double speedLimit) {
-        this.speedLimit = speedLimit;
+    public void setScoring(boolean scoring) {
+        this.scoring = scoring;
     }
 
     public void stop() {
@@ -183,10 +184,11 @@ public class Drive extends SubsystemBase {
         double rightFrontPower = (rotY - rotX - turn) / denominator;
         double rightBackPower = (rotY + rotX - turn) / denominator;
 
-        leftFrontMotor.setPower(leftFrontPower * speedLimit);
-        leftBackMotor.setPower(leftBackPower * speedLimit);
-        rightFrontMotor.setPower(rightFrontPower * speedLimit);
-        rightBackMotor.setPower(rightBackPower * speedLimit);
+        double limitFactor = scoring? speedLimit : 1;
+        leftFrontMotor.setPower(leftFrontPower * limitFactor);
+        leftBackMotor.setPower(leftBackPower * limitFactor);
+        rightFrontMotor.setPower(rightFrontPower * limitFactor);
+        rightBackMotor.setPower(rightBackPower * limitFactor);
     }
 
     public void moveRobot(double forward, double fun, double turn) {
@@ -202,10 +204,11 @@ public class Drive extends SubsystemBase {
         double rightFrontPower = (rotY - rotX - turn) / denominator;
         double rightBackPower = (rotY + rotX - turn) / denominator;
 
-        leftFrontMotor.setPower(leftFrontPower * speedLimit);
-        leftBackMotor.setPower(leftBackPower * speedLimit);
-        rightFrontMotor.setPower(rightFrontPower * speedLimit);
-        rightBackMotor.setPower(rightBackPower * speedLimit);
+        double limitFactor = scoring? speedLimit : 1;
+        leftFrontMotor.setPower(leftFrontPower * limitFactor);
+        leftBackMotor.setPower(leftBackPower * limitFactor);
+        rightFrontMotor.setPower(rightFrontPower * limitFactor);
+        rightBackMotor.setPower(rightBackPower * limitFactor);
     }
 
     public Pose2D getPose() {
@@ -242,7 +245,7 @@ public class Drive extends SubsystemBase {
         double filteredVelY = getFilteredVelY();
         double filteredHeadingVel = getFilteredHeadingVelocity(
                 org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit.RADIANS);
-        if (!isMoving()){
+        if (!isMoving() || !scoring){
             filteredVelX = 0;
             filteredVelY = 0;
             filteredHeadingVel = 0;
