@@ -33,10 +33,10 @@ public class DriveConstants {
     public static double kD_alignH = -0.01;
     public static double kF_alignH = -0.03;
 
-    public static double xNearPoseRed = 89, yNearPoseRed = 87;
+    public static double xNearPoseRed = 80, yNearPoseRed = 91;
     public static double xNearPoseBlue = 57, yNearPoseBlue = 92;
     public static double xFarPoseRed = 137, yFarPoseRed = 140;
-    public static double xFarPoseBlue = 64, yFarPoseBlue = 8;
+    public static double xFarPoseBlue = 63, yFarPoseBlue = 13;
     public static Pose2D blueGoalPose = new Pose2D(distanceUnit, 5.0, 135.7, angleUnit, 0);
     public static Pose2D redGoalPose = new Pose2D(distanceUnit, 135.2, 135.7, angleUnit, 0);
 
@@ -45,13 +45,13 @@ public class DriveConstants {
     public static double nearGoalDistance =
             Util.poseDistance(
                     new Pose2D(DistanceUnit.INCH,
-                            blueGoalPose.getX(distanceUnit),
-                            blueGoalPose.getY(distanceUnit), AngleUnit.RADIANS,
+                            redGoalPose.getX(distanceUnit),
+                            redGoalPose.getY(distanceUnit), AngleUnit.RADIANS,
                             0
                     ),
                     new Pose2D(DistanceUnit.INCH,
-                            xNearPoseBlue,
-                            yNearPoseBlue,
+                            xNearPoseRed,
+                            yNearPoseRed,
                             AngleUnit.RADIANS,
                             0
                     )
@@ -60,15 +60,15 @@ public class DriveConstants {
     public static double farGoalDistance =
             Util.poseDistance(
                     new Pose2D(DistanceUnit.INCH,
-                            blueGoalPose.getX(distanceUnit),
-                            blueGoalPose.getY(distanceUnit),
+                            redGoalPose.getX(distanceUnit),
+                            redGoalPose.getY(distanceUnit),
                             AngleUnit.RADIANS,
                             0
                     ),
                     new Pose2D(
                             DistanceUnit.INCH,
-                            xFarPoseBlue,
-                            yFarPoseBlue,
+                            xFarPoseRed,
+                            yFarPoseRed,
                             AngleUnit.RADIANS,
                             0
                     )

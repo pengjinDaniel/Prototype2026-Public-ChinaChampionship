@@ -156,13 +156,13 @@ public abstract class TeleOpBase extends CommandOpMode {
         new FunctionalButton(
                 () -> gamepadEx1.getButton(GamepadKeys.Button.DPAD_LEFT)
         ).whenPressed(
-                new InstantCommand(() -> turret.modify(-2000))
+                new InstantCommand(() -> turret.modify(2000))
         );
 
         new FunctionalButton(
                 () -> gamepadEx1.getButton(GamepadKeys.Button.DPAD_RIGHT)
         ).whenPressed(
-                new InstantCommand(() -> turret.modify(2000))
+                new InstantCommand(() -> turret.modify(-2000))
         );
     }
 
@@ -197,8 +197,6 @@ public abstract class TeleOpBase extends CommandOpMode {
         telemetry.addLine("----- Turret -----");
         telemetry.addData("Encoder Pos: ", turret.getTurretPos());
         telemetry.addData("Turret SetPoint: ", turret.getTicksSetpoint());
-        telemetry.addData("Turret X: ", Util.drivePoseToTurretPose(drive.getPose()).getX(distanceUnit));
-        telemetry.addData("Turret Y: ", Util.drivePoseToTurretPose(drive.getPose()).getY(distanceUnit));
         telemetry.addData("Distance to Goal: ", Util.goalInTurretSys(drive.getPose(), drive.getAlliance()).getMagnitude());
 
         telemetry.update();
