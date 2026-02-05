@@ -45,17 +45,12 @@ public class BlueNear21 extends CommandOpMode {
     public Command transitShootCommand() {
         return new SequentialCommandGroup(
                 new InstantCommand(() -> vision.autoCalibrate(follower, turret)),
-                new ParallelDeadlineGroup(
-                        new WaitCommand(1900),
-                        new TransitCommand(shooter, transit, intake)
-                                .andThen(new WaitCommand(150))
-                                .andThen(new ShootCommand(intake, shooter))
-                ),
+                new TransitCommand(shooter, transit, intake),
                 new InstantCommand(() -> intake.setIntakeState(Intake.IntakeState.STOP))
         );
     }
 
-    public Command intakeCommand(PathChain path) {
+    public Command intakeTrajCommand(PathChain path) {
         return new ParallelRaceGroup(
                 new AutoDriveCommand(follower, path),
                 new IntakeCommand(intake, transit)
@@ -227,11 +222,11 @@ public class BlueNear21 extends CommandOpMode {
                         new TurretAlignCommand(follower, turret, alliance, vision),
                         new ShooterAlignCommand(follower, shooter, transit, alliance),
                         new SequentialCommandGroup(
-                                new AutoDriveCommand(follower, Path1)
-                                        .alongWith(transitShootCommand()),
-                                intakeCommand(Path2),
-                                intakeCommand(Path3),
-                                intakeCommand(Path4),
+                                new AutoDriveCommand(follower, Path1),
+                                transitShootCommand(),
+                                intakeTrajCommand(Path2),
+                                intakeTrajCommand(Path3),
+                                intakeTrajCommand(Path4),
                                 transitShootCommand(),
                                 intakeTimedCommand(Path5, 2000),
                                 intakeTimedCommand(Path6, 1000),
@@ -239,17 +234,17 @@ public class BlueNear21 extends CommandOpMode {
                                         new WaitCommand(500),
                                         new IntakeCommand(intake, transit)
                                 ),
-                                intakeCommand(Path7),
+                                intakeTrajCommand(Path7),
                                 transitShootCommand(),
-                                intakeCommand(Path8),
-                                intakeCommand(Path9),
-                                intakeCommand(Path10),
+                                intakeTrajCommand(Path8),
+                                intakeTrajCommand(Path9),
+                                intakeTrajCommand(Path10),
                                 transitShootCommand(),
-                                intakeCommand(Path11),
-                                intakeCommand(Path12),
-                                intakeCommand(Path13),
+                                intakeTrajCommand(Path11),
+                                intakeTrajCommand(Path12),
+                                intakeTrajCommand(Path13),
                                 transitShootCommand(),
-                                intakeCommand(Path14)
+                                intakeTrajCommand(Path14)
                         )
                 )
         );
