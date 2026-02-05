@@ -260,11 +260,11 @@ public class Drive extends SubsystemBase {
         double velY = getFilteredVelY();
         double headingVel = getFilteredHeadingVelocity(UnnormalizedAngleUnit.RADIANS);
 
-//        if (!isMoving() || !scoring) {
-//            velX = 0;
-//            velY = 0;
-//            headingVel = 0;
-//        }
+        if (!isMoving()) {
+            velX = 0;
+            velY = 0;
+            headingVel = 0;
+        }
 
         double flyTime = getFlyTime(alliance);
 

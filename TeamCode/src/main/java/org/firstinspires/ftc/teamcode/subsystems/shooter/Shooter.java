@@ -6,13 +6,15 @@ import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants
 import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.kI;
 import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.kP;
 import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.slowLimitVelocity;
-import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.slowVelocity;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.utils.Util;
 
@@ -25,15 +27,18 @@ public class Shooter extends SubsystemBase {
     private PitchState pitchState = PitchState.LOW;
     private ShooterLimitState shooterLimitState = ShooterLimitState.FAR;
     private double pitchOffset;
+    private PIDFController pidfController;
+    private double targetVelocity;
 
     public Shooter(final HardwareMap hardwareMap) {
         leftShooter = hardwareMap.get(DcMotorEx.class, ShooterConstants.leftShooterName);
         rightShooter = hardwareMap.get(DcMotorEx.class, ShooterConstants.rightShooterName);
         pitchServo = hardwareMap.get(Servo.class, ShooterConstants.pitchServoName);
-        rightShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightShooter.setVelocityPIDFCoefficients(kP, kI, kD, kF);
-        leftShooter.setVelocityPIDFCoefficients(kP, kI, kD, kF);
+        rightShooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftShooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        rightShooter.setDirection(DcMotorSimple.Direction.REVERSE);
+        pidfController = new PIDFController(kP, kI, kD, kF);
         this.pitchOffset = 0;
     }
 
@@ -102,12 +107,12 @@ public class Shooter extends SubsystemBase {
     }
 
     public double getVelocity() {
-        return -rightShooter.getVelocity();
+        return rightShooter.getVelocity();
     }
 
     public boolean isShooterAtSetPoint() {
         return Util.epsilonEqual(shooterState.shooterVelocity,
-                -rightShooter.getVelocity(), ShooterConstants.shooterEpsilon);
+                getVelocity(), ShooterConstants.shooterEpsilon);
     }
 
     public PitchState getPitchState() {
@@ -120,31 +125,21 @@ public class Shooter extends SubsystemBase {
 
     @Override
     public void periodic() {
-//        if (shooterState == ShooterState.STOP) {
-//            setPitchState(PitchState.LOW);
-//        }
-//        if (shooterState == ShooterState.SLOW) {
-//            setPitchState(PitchState.MIDDLE);
-//        }
-//        if (shooterState == ShooterState.FAST) {
-//            setPitchState(PitchState.HIGH);
-//        }
-
-        rightShooter.setVelocityPIDFCoefficients(kP, kI, kD, kF);
-        leftShooter.setVelocityPIDFCoefficients(kP, kI, kD, kF);
-
         if (shooterLimitState == ShooterLimitState.NEAR) {
-            rightShooter.setVelocity(-Math.min(slowLimitVelocity, shooterState.shooterVelocity));
-            leftShooter.setVelocity(Math.min(slowLimitVelocity, shooterState.shooterVelocity));
+            targetVelocity = Math.min(slowLimitVelocity, shooterState.shooterVelocity);
         }
         else {
-            rightShooter.setVelocity(-shooterState.shooterVelocity);
-            leftShooter.setVelocity(shooterState.shooterVelocity);
+            targetVelocity = shooterState.shooterVelocity;
         }
 
-        if (shooterState.shooterVelocity > slowLimitVelocity && shooterState == ShooterState.DYNAMIC) {
-            pitchOffset = (getVelocity() - shooterState.shooterVelocity) / 1304;
-        }
+        double output = Range.clip(pidfController.calculate(getVelocity(), targetVelocity), -1.0, 1.0);
+
+        rightShooter.setPower(output);
+        leftShooter.setPower(output);
+
+//        if (shooterState.shooterVelocity > slowLimitVelocity && shooterState == ShooterState.DYNAMIC) {
+//            pitchOffset = (getVelocity() - shooterState.shooterVelocity) / 1304;
+//        }
         pitchServo.setPosition(clip(pitchState.servoPos + pitchOffset, 0, 0.9));
     }
 }

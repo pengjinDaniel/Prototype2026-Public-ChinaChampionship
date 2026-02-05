@@ -32,11 +32,11 @@ public class DriveConstants {
     public static double kP_brakeH = -0.8;
     public static double epsilonStopXY = 5;
     public static double epsilonStopH = 0.5;
-    public static double speedLimit = 1;
+    public static double speedLimit = 0.8;
 
-    public static double xNearPoseRed = 80, yNearPoseRed = 91;
+    public static double xNearPoseRed = 67, yNearPoseRed = 80;
 //    public static double xNearPoseBlue = 64, yNearPoseBlue = 91;
-    public static double xFarPoseRed = 63, yFarPoseRed = 13;
+    public static double xFarPoseRed = 74, yFarPoseRed = 17.5;
 //    public static double xFarPoseBlue = 81, yFarPoseBlue = 13;
     public static Pose2D blueGoalPose = new Pose2D(distanceUnit, 8, 134.7, angleUnit, 0);
     public static Pose2D redGoalPose = new Pose2D(distanceUnit, 136, 134.7, angleUnit, 0);

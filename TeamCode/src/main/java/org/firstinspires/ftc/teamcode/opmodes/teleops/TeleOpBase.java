@@ -53,6 +53,7 @@ public abstract class TeleOpBase extends CommandOpMode {
     public boolean aligning = false;
     public double lastTime = 0;
     public boolean killing = false;
+    public boolean killed = false;
 
     protected abstract Drive.Alliance getAlliance();
 
@@ -75,8 +76,8 @@ public abstract class TeleOpBase extends CommandOpMode {
         );
 
         drive.setDefaultCommand(new DriveCommand(drive, gamepadEx1));
-        turret.setDefaultCommand(new TurretAlignCommand(drive, turret, getAlliance(), vision, () -> gamepadEx1.getButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)));
-        shooter.setDefaultCommand(new ShooterAlignCommand(drive, shooter, transit, getAlliance(), () -> gamepadEx1.getButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)));
+        turret.setDefaultCommand(new TurretAlignCommand(drive, turret, getAlliance(), vision, () -> killed));
+        shooter.setDefaultCommand(new ShooterAlignCommand(drive, shooter, transit, getAlliance(), () -> killed));
 
         new FunctionalButton(
                 () -> gamepadEx1.getButton(GamepadKeys.Button.LEFT_STICK_BUTTON)

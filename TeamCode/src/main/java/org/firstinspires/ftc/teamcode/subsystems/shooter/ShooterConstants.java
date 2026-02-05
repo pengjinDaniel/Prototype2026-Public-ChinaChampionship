@@ -31,12 +31,12 @@ public class ShooterConstants {
     // Motor
     public static double stopVelocity = 0;
     public static double maxVelocity = 1520;
-    public static double fastVelocity = 1460;
+    public static double fastVelocity = 1420;
     public static double slowLimitVelocity = 1210;
     public static double slowVelocity = 1130;
     public static double minVelocity = 940;
-    public static double kP = 140.0;
+    public static double kP = 0.005;
     public static double kI = 0.0;
     public static double kD = 0.0;
-    public static double kF = 18.0;
+    public static double kF = 0.0005;
 }

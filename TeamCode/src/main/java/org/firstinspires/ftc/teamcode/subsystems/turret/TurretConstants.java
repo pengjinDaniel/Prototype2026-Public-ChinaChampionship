@@ -13,10 +13,10 @@ public class TurretConstants {
 //    public static double kIMoving = 0.05;
 //    public static double kDMoving = 0.00002;
 //    public static double kFMoving = 0;
-    public static double rangeEpsilon = Units.degreesToRadians(40);
+    public static double rangeEpsilon = Units.degreesToRadians(35);
     public static double alignEpsilon = 100;
 
-    public static double offset = Math.PI / 4;
+    public static double offset = Math.PI / 3;
 
     public static double offsetToRobot = Units.mmToInches(29.286);
 }
