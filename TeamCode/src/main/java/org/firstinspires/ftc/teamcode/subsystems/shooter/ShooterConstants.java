@@ -20,19 +20,20 @@ public class ShooterConstants {
     public static double near1Pose = 0.2;
     public static double near2Pose = 0.3;
     public static double near3Pose = 0.45;
-    public static double near4Pose = 0.6;
-    public static double near5Pose = 0.7;
-    public static double far1Pose = 0.89;
-    public static double far2Pose = 0.89;
+    public static double near4Pose = 0.5;
+    public static double near5Pose = 0.63;
+    public static double far1Pose = 0.82;
+    public static double far2Pose = 0.82;
 
     /**
      * In Ticks Per Second
      */
     // Motor
     public static double stopVelocity = 0;
-    public static double maxVelocity = 1480;
-    public static double fastVelocity = 1420;
-    public static double slowVelocity = 1100;
+    public static double maxVelocity = 1520;
+    public static double fastVelocity = 1460;
+    public static double slowLimitVelocity = 1210;
+    public static double slowVelocity = 1130;
     public static double minVelocity = 940;
     public static double kP = 140.0;
     public static double kI = 0.0;

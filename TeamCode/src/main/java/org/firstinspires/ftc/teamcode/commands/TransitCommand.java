@@ -13,7 +13,7 @@ public class TransitCommand extends CommandBase {
     private final Intake intake;
     private boolean hasOpened;
     private final ElapsedTime openTimer;
-    private static final double delay = 0;
+    private static final double delay = 300;
 
     public TransitCommand(Shooter shooter, Transit transit, Intake intake) {
         this.shooter = shooter;
@@ -32,25 +32,23 @@ public class TransitCommand extends CommandBase {
 
     @Override
     public void execute() {
-        if (openTimer.milliseconds() > delay) {
-            if (shooter.isShooterAtSetPoint() && shooter.getShooterState() != Shooter.ShooterState.STOP) {
-                if (shooter.getPitchState() == Shooter.PitchState.FAR1
-                        || shooter.getPitchState() == Shooter.PitchState.FAR2) {
-                    intake.setIntakeState(Intake.IntakeState.FARSHOOT);
-                }
-                else intake.setIntakeState(Intake.IntakeState.FORWARD);
+        if (shooter.isShooterAtSetPoint() && shooter.getShooterState() != Shooter.ShooterState.STOP) {
+            if (shooter.getPitchState() == Shooter.PitchState.FAR1
+                    || shooter.getPitchState() == Shooter.PitchState.FAR2) {
+                intake.setIntakeState(Intake.IntakeState.FARSHOOT);
+            }
+            else intake.setIntakeState(Intake.IntakeState.FORWARD);
 
-                if (!hasOpened) {
-                    transit.setState(Transit.TransitState.OPEN);
-                    hasOpened = true;
-                    openTimer.reset();
-                }
+            if (!hasOpened) {
+                transit.setState(Transit.TransitState.OPEN);
+                hasOpened = true;
+                openTimer.reset();
             }
         }
     }
 
     @Override
     public boolean isFinished() {
-        return hasOpened;
+        return hasOpened && openTimer.milliseconds() > 2.5 * delay;
     }
 }

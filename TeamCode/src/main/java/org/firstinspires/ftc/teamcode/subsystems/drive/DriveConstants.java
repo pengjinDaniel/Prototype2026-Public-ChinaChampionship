@@ -38,8 +38,8 @@ public class DriveConstants {
 //    public static double xNearPoseBlue = 64, yNearPoseBlue = 91;
     public static double xFarPoseRed = 63, yFarPoseRed = 13;
 //    public static double xFarPoseBlue = 81, yFarPoseBlue = 13;
-    public static Pose2D blueGoalPose = new Pose2D(distanceUnit, 7, 134.7, angleUnit, 0);
-    public static Pose2D redGoalPose = new Pose2D(distanceUnit, 137, 134.7, angleUnit, 0);
+    public static Pose2D blueGoalPose = new Pose2D(distanceUnit, 8, 134.7, angleUnit, 0);
+    public static Pose2D redGoalPose = new Pose2D(distanceUnit, 136, 134.7, angleUnit, 0);
 
 
     //86 24, 60 86

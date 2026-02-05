@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants
 import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.kF;
 import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.kI;
 import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.kP;
+import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.slowLimitVelocity;
 import static org.firstinspires.ftc.teamcode.subsystems.shooter.ShooterConstants.slowVelocity;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
@@ -23,6 +24,7 @@ public class Shooter extends SubsystemBase {
     private ShooterState shooterState = ShooterState.STOP;
     private PitchState pitchState = PitchState.LOW;
     private ShooterLimitState shooterLimitState = ShooterLimitState.FAR;
+    private double pitchOffset;
 
     public Shooter(final HardwareMap hardwareMap) {
         leftShooter = hardwareMap.get(DcMotorEx.class, ShooterConstants.leftShooterName);
@@ -32,6 +34,7 @@ public class Shooter extends SubsystemBase {
         leftShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightShooter.setVelocityPIDFCoefficients(kP, kI, kD, kF);
         leftShooter.setVelocityPIDFCoefficients(kP, kI, kD, kF);
+        this.pitchOffset = 0;
     }
 
     public enum ShooterState {
@@ -99,7 +102,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public double getVelocity() {
-        return rightShooter.getVelocity();
+        return -rightShooter.getVelocity();
     }
 
     public boolean isShooterAtSetPoint() {
@@ -109,6 +112,10 @@ public class Shooter extends SubsystemBase {
 
     public PitchState getPitchState() {
         return pitchState;
+    }
+
+    public void setPitchOffset(double pitchOffset) {
+        this.pitchOffset = pitchOffset;
     }
 
     @Override
@@ -127,14 +134,17 @@ public class Shooter extends SubsystemBase {
         leftShooter.setVelocityPIDFCoefficients(kP, kI, kD, kF);
 
         if (shooterLimitState == ShooterLimitState.NEAR) {
-            rightShooter.setVelocity(-Math.min(slowVelocity, shooterState.shooterVelocity));
-            leftShooter.setVelocity(Math.min(slowVelocity, shooterState.shooterVelocity));
+            rightShooter.setVelocity(-Math.min(slowLimitVelocity, shooterState.shooterVelocity));
+            leftShooter.setVelocity(Math.min(slowLimitVelocity, shooterState.shooterVelocity));
         }
         else {
             rightShooter.setVelocity(-shooterState.shooterVelocity);
             leftShooter.setVelocity(shooterState.shooterVelocity);
         }
 
-        pitchServo.setPosition(pitchState.servoPos);
+        if (shooterState.shooterVelocity > slowLimitVelocity && shooterState == ShooterState.DYNAMIC) {
+            pitchOffset = (getVelocity() - shooterState.shooterVelocity) / 1304;
+        }
+        pitchServo.setPosition(clip(pitchState.servoPos + pitchOffset, 0, 0.9));
     }
 }

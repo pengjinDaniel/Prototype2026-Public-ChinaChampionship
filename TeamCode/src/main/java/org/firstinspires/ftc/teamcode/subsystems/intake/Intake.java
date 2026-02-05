@@ -13,7 +13,7 @@ public class Intake extends SubsystemBase {
     public enum IntakeState {
         STOP(0),
         FORWARD(IntakeConstants.intakePower),
-        FARSHOOT(0.9),
+        FARSHOOT(0.75),
         REVERSED(-IntakeConstants.intakePower);
 
         public double power;
