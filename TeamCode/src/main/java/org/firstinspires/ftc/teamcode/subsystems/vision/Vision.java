@@ -53,10 +53,11 @@ public class Vision extends SubsystemBase {
         return true;
     }
 
-    public void autoCalibrate(Follower follower, Turret turret) {
+    public boolean autoCalibrate(Follower follower, Turret turret) {
         Pose2D temp = getVisionPose();
-        if (temp.getX(distanceUnit) < -1e5) return;
+        if (temp.getX(distanceUnit) < -1e5) return false;
         Pose pose = Util.Pose2DToPose(Util.turretToDrivePose(temp, turret));
         follower.setPose(pose);
+        return true;
     }
 }

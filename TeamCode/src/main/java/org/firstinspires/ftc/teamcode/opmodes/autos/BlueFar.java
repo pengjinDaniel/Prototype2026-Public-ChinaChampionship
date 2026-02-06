@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode.opmodes.autos;
 
-import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.angleUnit;
-import static org.firstinspires.ftc.teamcode.subsystems.drive.DriveConstants.distanceUnit;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.command.Command;
@@ -20,7 +17,6 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.commands.AutoDriveCommand;
 import org.firstinspires.ftc.teamcode.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.ShootCommand;
@@ -86,7 +82,7 @@ public class BlueFar extends CommandOpMode {
         this.follower = Constants.createFollower(hardwareMap);
         this.intake = new Intake(hardwareMap);
         this.shooter = new Shooter(hardwareMap);
-        this.transit = new Transit(hardwareMap);
+        this.transit = new Transit(hardwareMap, false);
         this.turret = new Turret(hardwareMap);
         this.vision = new Vision(hardwareMap);
         this.alliance = Drive.Alliance.BLUE;

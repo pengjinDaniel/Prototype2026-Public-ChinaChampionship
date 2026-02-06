@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.autos;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.ParallelDeadlineGroup;
@@ -17,6 +18,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.commands.AutoDriveCommand;
 import org.firstinspires.ftc.teamcode.commands.IntakeCommand;
+import org.firstinspires.ftc.teamcode.commands.LedWinkCommand;
 import org.firstinspires.ftc.teamcode.commands.ShootCommand;
 import org.firstinspires.ftc.teamcode.commands.ShooterAlignCommand;
 import org.firstinspires.ftc.teamcode.commands.TransitCommand;
@@ -24,6 +26,7 @@ import org.firstinspires.ftc.teamcode.commands.TurretAlignCommand;
 import org.firstinspires.ftc.teamcode.subsystems.drive.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.drive.Drive;
 import org.firstinspires.ftc.teamcode.subsystems.intake.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.led.Led;
 import org.firstinspires.ftc.teamcode.subsystems.shooter.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.transit.Transit;
 import org.firstinspires.ftc.teamcode.subsystems.turret.Turret;
@@ -38,19 +41,20 @@ public class RedFar extends CommandOpMode {
     private Turret turret;
     private Vision vision;
     private Drive.Alliance alliance;
+    private Led led;
 
     public PathChain Path1, Path2, Path3, Path4, Path5, Path6, Path7, Path8, Path9, Path10, Path11, Path12, Path13, Path14;
 
     public Command transitShootCommand() {
         return new SequentialCommandGroup(
-                new InstantCommand(() -> vision.autoCalibrate(follower, turret)),
                 new ParallelDeadlineGroup(
                         new WaitCommand(2500),
                         new TransitCommand(shooter, transit, intake)
                                 .andThen(new WaitCommand(200))
                                 .andThen(new ShootCommand(intake, shooter))
                 ),
-                new InstantCommand(() -> intake.setIntakeState(Intake.IntakeState.STOP))
+                new InstantCommand(() -> intake.setIntakeState(Intake.IntakeState.STOP)),
+                new ConditionalCommand(new LedWinkCommand(led), new InstantCommand(), () -> vision.autoCalibrate(follower, turret))
         );
     }
 
@@ -77,10 +81,11 @@ public class RedFar extends CommandOpMode {
         this.follower = Constants.createFollower(hardwareMap);
         this.intake = new Intake(hardwareMap);
         this.shooter = new Shooter(hardwareMap);
-        this.transit = new Transit(hardwareMap);
+        this.transit = new Transit(hardwareMap, false);
         this.turret = new Turret(hardwareMap);
         this.vision = new Vision(hardwareMap);
         this.alliance = Drive.Alliance.RED;
+        this.led = new Led(hardwareMap);
 
         follower.setStartingPose(new Pose(88.211, 7.527, Math.toRadians(0)));
 

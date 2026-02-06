@@ -67,7 +67,7 @@ public class BlueNearGates extends CommandOpMode {
         this.follower = Constants.createFollower(hardwareMap);
         this.intake = new Intake(hardwareMap);
         this.shooter = new Shooter(hardwareMap);
-        this.transit = new Transit(hardwareMap);
+        this.transit = new Transit(hardwareMap, false);
         this.turret = new Turret(hardwareMap);
         this.vision = new Vision(hardwareMap);
         this.alliance = Drive.Alliance.BLUE;

@@ -7,10 +7,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Transit extends SubsystemBase {
     public final Servo limitServo;
-    public TransitState transitState = TransitState.CLOSE;
+    public TransitState transitState;
 
-    public Transit(HardwareMap hardwareMap) {
+    public Transit(HardwareMap hardwareMap, boolean isTeleop) {
         limitServo = hardwareMap.get(Servo.class, TransitConstants.transitServoName);
+        if (isTeleop) transitState = TransitState.CLOSE;
+        else transitState = TransitState.OPEN;
     }
 
     public static enum TransitState {

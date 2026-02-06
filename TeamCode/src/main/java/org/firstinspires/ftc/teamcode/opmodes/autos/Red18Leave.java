@@ -33,8 +33,8 @@ import org.firstinspires.ftc.teamcode.subsystems.transit.Transit;
 import org.firstinspires.ftc.teamcode.subsystems.turret.Turret;
 import org.firstinspires.ftc.teamcode.subsystems.vision.Vision;
 
-@Autonomous(name = "Red Near 21", group = "Auto")
-public class RedNear21 extends CommandOpMode {
+@Autonomous(name = "Red 18 Leave", group = "Auto")
+public class Red18Leave extends CommandOpMode {
     private Follower follower;
     private Intake intake;
     private Shooter shooter;
@@ -177,20 +177,10 @@ public class RedNear21 extends CommandOpMode {
                         new BezierLine(
                                 new Pose(121.221, 35.313),
 
-                                new Pose(88.417, 87.696)
+                                new Pose(93.810, 123.767)
                         )
                 ).setTangentHeadingInterpolation()
                 .setReversed()
-                .build();
-
-        Path11 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(88.417, 87.696),
-
-                                new Pose(95.850, 49.380)
-                        )
-                ).setTangentHeadingInterpolation()
-
                 .build();
 
 
@@ -225,8 +215,7 @@ public class RedNear21 extends CommandOpMode {
                                 transitShootCommand(),
                                 intakeTrajCommand(Path9),
                                 intakeTrajCommand(Path10),
-                                transitShootCommand(),
-                                intakeTrajCommand(Path11)
+                                transitShootCommand()
                         )
                 )
         );

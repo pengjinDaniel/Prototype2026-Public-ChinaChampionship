@@ -62,7 +62,7 @@ public abstract class TeleOpBase extends CommandOpMode {
         drive = new Drive(hardwareMap, getAlliance());
         gamepadEx1 = new GamepadEx(gamepad1);
         shooter = new Shooter(hardwareMap);
-        transit = new Transit(hardwareMap);
+        transit = new Transit(hardwareMap, true);
         intake = new Intake(hardwareMap);
         timer = new ElapsedTime();
         turret = new Turret(hardwareMap);
