@@ -26,8 +26,10 @@ import org.firstinspires.ftc.teamcode.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.DriveCommand;
 import org.firstinspires.ftc.teamcode.commands.ShootCommand;
 import org.firstinspires.ftc.teamcode.commands.ShooterAlignCommand;
+import org.firstinspires.ftc.teamcode.commands.ShooterAlignCommandStatic;
 import org.firstinspires.ftc.teamcode.commands.TransitCommand;
 import org.firstinspires.ftc.teamcode.commands.TurretAlignCommand;
+import org.firstinspires.ftc.teamcode.commands.TurretAlignCommandStatic;
 import org.firstinspires.ftc.teamcode.subsystems.drive.Drive;
 import org.firstinspires.ftc.teamcode.subsystems.intake.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.led.Led;
@@ -42,7 +44,7 @@ import java.util.concurrent.TimeUnit;
 
 @Config
 @Configurable
-public abstract class TeleOpBase extends CommandOpMode {
+public abstract class TeleOpBaseStatic extends CommandOpMode {
     public Drive drive;
     public GamepadEx gamepadEx1;
     public Shooter shooter;
@@ -78,8 +80,8 @@ public abstract class TeleOpBase extends CommandOpMode {
         );
 
         drive.setDefaultCommand(new DriveCommand(drive, gamepadEx1));
-        turret.setDefaultCommand(new TurretAlignCommand(drive, turret, getAlliance(), vision, () -> killed));
-        shooter.setDefaultCommand(new ShooterAlignCommand(drive, shooter, transit, getAlliance(), () -> killed));
+        turret.setDefaultCommand(new TurretAlignCommandStatic(drive, turret, getAlliance(), vision, () -> killed));
+        shooter.setDefaultCommand(new ShooterAlignCommandStatic(drive, shooter, transit, getAlliance(), () -> killed));
 
         new FunctionalButton(
                 () -> gamepadEx1.getButton(GamepadKeys.Button.LEFT_STICK_BUTTON)

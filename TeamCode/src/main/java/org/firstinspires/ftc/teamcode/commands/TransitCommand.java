@@ -13,7 +13,7 @@ public class TransitCommand extends CommandBase {
     private final Intake intake;
     private boolean hasOpened;
     private final ElapsedTime openTimer;
-    private static double delay = 600;
+    private static double delay = 750;
 
     public TransitCommand(Shooter shooter, Transit transit, Intake intake) {
         this.shooter = shooter;
@@ -33,17 +33,18 @@ public class TransitCommand extends CommandBase {
     @Override
     public void execute() {
         if (shooter.isShooterAtSetPoint() && shooter.getShooterState() != Shooter.ShooterState.STOP) {
-            if (shooter.getPitchState() == Shooter.PitchState.FAR1
-                    || shooter.getPitchState() == Shooter.PitchState.FAR2) {
-                intake.setIntakeState(Intake.IntakeState.FARSHOOT);
-                delay = 900;
-            }
-            else intake.setIntakeState(Intake.IntakeState.FORWARD);
-
             if (!hasOpened) {
                 transit.setState(Transit.TransitState.OPEN);
                 hasOpened = true;
                 openTimer.reset();
+            }
+            if (openTimer.milliseconds() > 150) {
+                if (shooter.getPitchState() == Shooter.PitchState.FAR1
+                        || shooter.getPitchState() == Shooter.PitchState.FAR2) {
+                    intake.setIntakeState(Intake.IntakeState.FARSHOOT);
+                    delay = 1050;
+                }
+                else intake.setIntakeState(Intake.IntakeState.FORWARD);
             }
         }
     }

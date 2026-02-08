@@ -30,8 +30,8 @@ public class DriveConstants {
 
     public static double kP_brakeXY = 0.02;
     public static double kP_brakeH = -0.8;
-    public static double epsilonStopXY = 10;
-    public static double epsilonStopH = 0.5;
+    public static double epsilonStopXY = 20;
+    public static double epsilonStopH = 3.14;
     public static double speedLimit = 0.8;
 
     public static double xNearPoseRed = 67, yNearPoseRed = 80;

@@ -177,7 +177,7 @@ public class Blue18Leave extends CommandOpMode {
                         new BezierLine(
                                 new Pose(22.779, 35.313),
 
-                                new Pose(58.870, 117.499)
+                                new Pose(55.374, 87.840)
                         )
                 ).setTangentHeadingInterpolation()
                 .setReversed()
@@ -195,6 +195,7 @@ public class Blue18Leave extends CommandOpMode {
                                 intakeTrajCommand(Path3),
                                 transitShootCommand(),
                                 intakeTimedCommand(Path4, 2000),
+                                new WaitCommand(400),
                                 intakeTimedCommand(Path5, 1000),
                                 new ParallelDeadlineGroup(
                                         new WaitCommand(500),
@@ -203,6 +204,16 @@ public class Blue18Leave extends CommandOpMode {
                                 intakeTrajCommand(Path6),
                                 transitShootCommand(),
                                 intakeTimedCommand(Path4, 2000),
+                                new WaitCommand(400),
+                                intakeTimedCommand(Path5, 1000),
+                                new ParallelDeadlineGroup(
+                                        new WaitCommand(500),
+                                        new IntakeCommand(intake, transit)
+                                ),
+                                intakeTrajCommand(Path6),
+                                transitShootCommand(),
+                                intakeTimedCommand(Path4, 2000),
+                                new WaitCommand(400),
                                 intakeTimedCommand(Path5, 1000),
                                 new ParallelDeadlineGroup(
                                         new WaitCommand(500),
@@ -212,9 +223,6 @@ public class Blue18Leave extends CommandOpMode {
                                 transitShootCommand(),
                                 intakeTrajCommand(Path7),
                                 intakeTrajCommand(Path8),
-                                transitShootCommand(),
-                                intakeTrajCommand(Path9),
-                                intakeTrajCommand(Path10),
                                 transitShootCommand()
                         )
                 )

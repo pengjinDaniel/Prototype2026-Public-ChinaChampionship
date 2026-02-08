@@ -6,6 +6,6 @@ import com.acmerobotics.dashboard.config.Config;
 public class TransitConstants {
     public static String transitServoName = "limitServo";
 
-    public static double transitServoClosePos = 0.45;
-    public static double transitServoOpenPos = 0.13;
+    public static double transitServoClosePos = 0.52;
+    public static double transitServoOpenPos = 0.22;
 }

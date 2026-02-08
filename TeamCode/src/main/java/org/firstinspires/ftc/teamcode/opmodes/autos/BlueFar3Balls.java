@@ -1,9 +1,10 @@
 package org.firstinspires.ftc.teamcode.opmodes.autos;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
-import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.ParallelDeadlineGroup;
@@ -19,7 +20,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.commands.AutoDriveCommand;
 import org.firstinspires.ftc.teamcode.commands.IntakeCommand;
-import org.firstinspires.ftc.teamcode.commands.LedWinkCommand;
 import org.firstinspires.ftc.teamcode.commands.ShootCommand;
 import org.firstinspires.ftc.teamcode.commands.ShooterAlignCommand;
 import org.firstinspires.ftc.teamcode.commands.TransitCommand;
@@ -27,30 +27,35 @@ import org.firstinspires.ftc.teamcode.commands.TurretAlignCommand;
 import org.firstinspires.ftc.teamcode.subsystems.drive.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.drive.Drive;
 import org.firstinspires.ftc.teamcode.subsystems.intake.Intake;
-import org.firstinspires.ftc.teamcode.subsystems.led.Led;
 import org.firstinspires.ftc.teamcode.subsystems.shooter.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.transit.Transit;
 import org.firstinspires.ftc.teamcode.subsystems.turret.Turret;
 import org.firstinspires.ftc.teamcode.subsystems.vision.Vision;
 
-@Autonomous(name = "Blue Near Gates", group = "Auto")
-public class BlueNearGates extends CommandOpMode {
+@Autonomous(name = "Blue Far 3 Balls", group = "Auto")
+public class BlueFar3Balls extends CommandOpMode {
     private Follower follower;
     private Intake intake;
     private Shooter shooter;
     private Transit transit;
     private Turret turret;
     private Vision vision;
-    private Led led;
     private Drive.Alliance alliance;
 
-    public PathChain Path1, Path2, Path3, Path4, Path5, Path6, Path7, Path8, Path9, Path10, Path11, Path12, Path13;
+    public PathChain Path1, Path2, Path3, Path4, Path5, Path6, Path7, Path8;
+
+    public FtcDashboard dashboard;
 
     public Command transitShootCommand() {
         return new SequentialCommandGroup(
-                new TransitCommand(shooter, transit, intake),
-                new InstantCommand(() -> intake.setIntakeState(Intake.IntakeState.STOP)),
-                new ConditionalCommand(new LedWinkCommand(led), new InstantCommand(), () -> vision.autoCalibrate(follower, turret))
+                new InstantCommand(() -> vision.autoCalibrate(follower, turret)),
+                new ParallelDeadlineGroup(
+                        new WaitCommand(2500),
+                        new TransitCommand(shooter, transit, intake)
+                                .andThen(new WaitCommand(200))
+                                .andThen(new ShootCommand(intake, shooter))
+                ),
+                new InstantCommand(() -> intake.setIntakeState(Intake.IntakeState.STOP))
         );
     }
 
@@ -61,11 +66,16 @@ public class BlueNearGates extends CommandOpMode {
         ).andThen(new InstantCommand(() -> intake.setIntakeState(Intake.IntakeState.STOP)));
     }
 
-    public Command intakeTimedCommand(PathChain path, double time) {
-        return new ParallelRaceGroup(
-                new AutoDriveCommand(follower, path, time),
-                new IntakeCommand(intake, transit)
-        ).andThen(new InstantCommand(() -> intake.setIntakeState(Intake.IntakeState.STOP)));
+    public Command cycleCommand() {
+        return new SequentialCommandGroup(
+                intakeCommand(Path4),
+                new ParallelRaceGroup(
+                        new WaitCommand(1000),
+                        new IntakeCommand(intake, transit)
+                ),
+                intakeCommand(Path5),
+                transitShootCommand()
+        );
     }
 
     @Override
@@ -77,15 +87,37 @@ public class BlueNearGates extends CommandOpMode {
         this.turret = new Turret(hardwareMap);
         this.vision = new Vision(hardwareMap);
         this.alliance = Drive.Alliance.BLUE;
-        this.led = new Led(hardwareMap);
 
-        follower.setStartingPose(new Pose(33.182, 136.130, Math.toRadians(180)));
+        this.dashboard = FtcDashboard.getInstance();
+
+        follower.setStartingPose(new Pose(55.789, 7.527, Math.toRadians(180)));
 
         Path1 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(33.182, 136.130),
+                                new Pose(55.789, 7.527),
 
-                                new Pose(47.033, 95.663)
+                                new Pose(59.199, 11.079)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+
+                .build();
+
+        Path7 = follower.pathBuilder().addPath(
+                        new BezierCurve(
+                                new Pose(59.199, 11.079),
+                                new Pose(57.588, 30.314),
+                                new Pose(50.949, 36.455),
+                                new Pose(21.330, 35.468)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+
+                .build();
+
+        Path8 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(21.330, 35.468),
+
+                                new Pose(59.217, 11.512)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
 
@@ -93,9 +125,9 @@ public class BlueNearGates extends CommandOpMode {
 
         Path2 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(47.033, 95.663),
+                                new Pose(59.217, 11.512),
 
-                                new Pose(49.214, 60.122)
+                                new Pose(13.021, 8.129)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
 
@@ -103,29 +135,29 @@ public class BlueNearGates extends CommandOpMode {
 
         Path3 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(49.214, 60.122),
+                                new Pose(13.021, 8.129),
 
-                                new Pose(15.160, 60.017)
+                                new Pose(59.589, 10.980)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
 
                 .build();
 
         Path4 = follower.pathBuilder().addPath(
-                        new BezierCurve(
-                                new Pose(15.160, 60.017),
-                                new Pose(43.188, 66.128),
-                                new Pose(20.093, 67.592)
+                        new BezierLine(
+                                new Pose(59.589, 10.980),
+
+                                new Pose(12.922, 10.941)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
 
                 .build();
 
         Path5 = follower.pathBuilder().addPath(
-                        new BezierCurve(
-                                new Pose(20.093, 67.592),
-                                new Pose(68.391, 67.681),
-                                new Pose(46.656, 95.935)
+                        new BezierLine(
+                                new Pose(12.922, 10.941),
+
+                                new Pose(59.524, 11.004)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
 
@@ -133,79 +165,9 @@ public class BlueNearGates extends CommandOpMode {
 
         Path6 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(46.656, 95.935),
+                                new Pose(59.524, 11.004),
 
-                                new Pose(47.219, 84.563)
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
-
-                .build();
-
-        Path7 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(47.219, 84.563),
-
-                                new Pose(19.021, 84.261)
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
-
-                .build();
-
-        Path8 = follower.pathBuilder().addPath(
-                        new BezierCurve(
-                                new Pose(19.021, 84.261),
-                                new Pose(41.135, 79.270),
-                                new Pose(17.346, 71.995)
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
-
-                .build();
-
-        Path9 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(17.346, 71.995),
-
-                                new Pose(47.064, 96.100)
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
-
-                .build();
-
-        Path10 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(47.064, 96.100),
-
-                                new Pose(50.209, 35.682)
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
-
-                .build();
-
-        Path11 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(50.209, 35.682),
-
-                                new Pose(17.218, 35.311)
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
-
-                .build();
-
-        Path12 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(17.218, 35.311),
-
-                                new Pose(47.191, 95.974)
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
-
-                .build();
-
-        Path13 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(47.191, 95.974),
-
-                                new Pose(34.892, 73.632)
+                                new Pose(38.096, 10.598)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
 
@@ -217,35 +179,68 @@ public class BlueNearGates extends CommandOpMode {
                         new ShooterAlignCommand(follower, shooter, transit, alliance),
                         new SequentialCommandGroup(
                                 new AutoDriveCommand(follower, Path1),
+                                new WaitCommand(1500),
+                                transitShootCommand(),
+                                intakeCommand(Path7),
+                                intakeCommand(Path8),
                                 transitShootCommand(),
                                 intakeCommand(Path2),
+                                new ParallelRaceGroup(
+                                        new WaitCommand(1000),
+                                        new IntakeCommand(intake, transit)
+                                ),
                                 intakeCommand(Path3),
-                                intakeTimedCommand(Path4, 2500),
-                                intakeCommand(Path5),
                                 transitShootCommand(),
-                                intakeCommand(Path6),
-                                intakeCommand(Path7),
-                                intakeTimedCommand(Path8, 2500),
-                                intakeCommand(Path9),
-                                transitShootCommand(),
-                                intakeCommand(Path10),
-                                intakeCommand(Path11),
-                                intakeCommand(Path12),
-                                transitShootCommand(),
-                                new AutoDriveCommand(follower, Path13)
+                                cycleCommand(),
+                                new AutoDriveCommand(follower, Path6)
                         )
                 )
         );
+    }
+
+    private void printPose() {
+        TelemetryPacket packet = new TelemetryPacket();
+        Pose pose = follower.getPose();
+
+        double x = pose.getX();
+        double y = pose.getY();
+        double heading = pose.getHeading();
+
+        double xDraw = -72 + x;
+        double yDraw = -72 + y;
+
+        double headingDraw = heading + Math.PI;
+
+        headingDraw = Math.atan2(Math.sin(headingDraw), Math.cos(headingDraw));
+
+        packet.put("x(inch)", x);
+        packet.put("y(inch)", y);
+        packet.put("heading(deg)", Math.toDegrees(heading));
+
+        packet.fieldOverlay().setFill("blue");
+        packet.fieldOverlay().fillCircle(xDraw, yDraw, 2.0);
+
+        double headingLength = 5.0;
+        double hx = xDraw + Math.cos(headingDraw) * headingLength;
+        double hy = yDraw + Math.sin(headingDraw) * headingLength;
+
+        packet.fieldOverlay().setStroke("red");
+        packet.fieldOverlay().strokeLine(xDraw, yDraw, hx, hy);
+
+        dashboard.sendTelemetryPacket(packet);
     }
 
     @Override
     public void run() {
         follower.update();
         CommandScheduler.getInstance().run();
+
         telemetry.addData("X", follower.getPose().getX());
         telemetry.addData("Y", follower.getPose().getY());
         telemetry.addData("Heading", follower.getPose().getHeading());
         telemetry.addData("Shooter at Setpoint: ", shooter.isShooterAtSetPoint());
         telemetry.update();
+
+        printPose();
     }
 }

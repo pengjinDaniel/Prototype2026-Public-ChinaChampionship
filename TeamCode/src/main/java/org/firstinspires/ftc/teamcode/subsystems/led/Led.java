@@ -9,7 +9,8 @@ public class Led extends SubsystemBase {
 
     public enum LedState {
         YELLOW(0.4),
-        GREEN(0.5);
+        GREEN(0.5),
+        RED(0.3);
 
         public double pos;
 
