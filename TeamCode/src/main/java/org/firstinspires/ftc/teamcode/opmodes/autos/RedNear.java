@@ -105,14 +105,14 @@ public class RedNear extends CommandOpMode {
                         new BezierCurve(
                                 new Pose(86.404, 86.309),
                                 new Pose(104.313, 70.659),
-                                new Pose(128.207, 64.201)
+                                new Pose(128.606, 65.999)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(0))
                 .build();
 
         Path5 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(128.207, 64.201),
+                                new Pose(128.606, 65.999),
                                 new Pose(127.680, 55.921)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(45))
@@ -138,14 +138,14 @@ public class RedNear extends CommandOpMode {
                         new BezierCurve(
                                 new Pose(86.792, 86.198),
                                 new Pose(103.648, 70.954),
-                                new Pose(128.104, 64.100)
+                                new Pose(128.503, 65.897)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(0))
                 .build();
 
         Path9 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(128.104, 64.100),
+                                new Pose(128.503, 65.897),
                                 new Pose(127.742, 55.877)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(45))
@@ -160,8 +160,9 @@ public class RedNear extends CommandOpMode {
                 .build();
 
         Path11 = follower.pathBuilder().addPath(
-                        new BezierLine(
+                        new BezierCurve(
                                 new Pose(131.770, 54.850),
+                                new Pose(93.518, 66.514),
                                 new Pose(86.825, 86.175)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
@@ -195,7 +196,7 @@ public class RedNear extends CommandOpMode {
         Path15 = follower.pathBuilder().addPath(
                         new BezierLine(
                                 new Pose(121.032, 35.950),
-                                new Pose(87.255, 88.380)
+                                new Pose(90.051, 85.584)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(90))
                 .build();
