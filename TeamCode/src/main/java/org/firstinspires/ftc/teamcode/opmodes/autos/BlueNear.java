@@ -63,6 +63,13 @@ public class BlueNear extends CommandOpMode {
         ).andThen(new InstantCommand(() -> intake.setIntakeState(Intake.IntakeState.STOP)));
     }
 
+    public Command intakeDuringPath(PathChain path, double timeoutMs) {
+        return new ParallelDeadlineGroup(
+                new AutoDriveCommand(follower, path, timeoutMs),
+                new IntakeCommand(intake, transit)
+        ).andThen(new InstantCommand(() -> intake.setIntakeState(Intake.IntakeState.STOP)));
+    }
+
     @Override
     public void initialize() {
         this.follower = Constants.createFollower(hardwareMap);
@@ -152,7 +159,6 @@ public class BlueNear extends CommandOpMode {
                                 new Pose(20.053, 64.065)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
-                .setTimeoutConstraint(100)
                 .build();
 
         Path10 = follower.pathBuilder().addPath(
@@ -161,7 +167,6 @@ public class BlueNear extends CommandOpMode {
                                 new Pose(12.430, 57.447)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(135))
-                .setTimeoutConstraint(100)
                 .build();
 
         Path11 = follower.pathBuilder().addPath(
@@ -222,8 +227,8 @@ public class BlueNear extends CommandOpMode {
                                 new AutoDriveCommand(follower, Path7),
                                 transitShootCommand(),
                                 new AutoDriveCommand(follower, Path8),
-                                intakeDuringPath(Path9),
-                                intakeDuringPath(Path10),
+                                intakeDuringPath(Path9, 300),
+                                intakeDuringPath(Path10, 300),
                                 new AutoDriveCommand(follower, Path11),
                                 transitShootCommand(),
                                 intakeDuringPath(Path12),

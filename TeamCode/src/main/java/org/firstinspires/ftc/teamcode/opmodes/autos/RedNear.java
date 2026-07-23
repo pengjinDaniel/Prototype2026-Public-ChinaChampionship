@@ -63,6 +63,13 @@ public class RedNear extends CommandOpMode {
         ).andThen(new InstantCommand(() -> intake.setIntakeState(Intake.IntakeState.STOP)));
     }
 
+    public Command intakeDuringPath(PathChain path, double timeoutMs) {
+        return new ParallelDeadlineGroup(
+                new AutoDriveCommand(follower, path, timeoutMs),
+                new IntakeCommand(intake, transit)
+        ).andThen(new InstantCommand(() -> intake.setIntakeState(Intake.IntakeState.STOP)));
+    }
+
     @Override
     public void initialize() {
         this.follower = Constants.createFollower(hardwareMap);
@@ -81,7 +88,7 @@ public class RedNear extends CommandOpMode {
                                 new Pose(118.169, 128.559),
                                 new Pose(93.770, 119.245)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(38), Math.toRadians(90))
+                ).setLinearHeadingInterpolation(Math.toRadians(38), Math.toRadians(38))
                 .build();
 
         Path2 = follower.pathBuilder().addPath(
@@ -90,7 +97,7 @@ public class RedNear extends CommandOpMode {
                                 new Pose(63.171, 63.244),
                                 new Pose(121.393, 59.544)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(0))
+                ).setLinearHeadingInterpolation(Math.toRadians(38), Math.toRadians(0))
                 .build();
 
         Path3 = follower.pathBuilder().addPath(
@@ -152,7 +159,6 @@ public class RedNear extends CommandOpMode {
                                 new Pose(123.947, 64.065)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(45))
-                .setTimeoutConstraint(200)
                 .build();
 
         Path10 = follower.pathBuilder().addPath(
@@ -161,7 +167,6 @@ public class RedNear extends CommandOpMode {
                                 new Pose(131.570, 57.447)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(45))
-                .setTimeoutConstraint(200)
                 .build();
 
         Path11 = follower.pathBuilder().addPath(
@@ -217,13 +222,13 @@ public class RedNear extends CommandOpMode {
                                 new AutoDriveCommand(follower, Path3),
                                 transitShootCommand(),
                                 new AutoDriveCommand(follower, Path4),
-                                intakeDuringPath(Path5),
-                                intakeDuringPath(Path6),
+                                intakeDuringPath(Path5,300),
+                                intakeDuringPath(Path6,300),
                                 new AutoDriveCommand(follower, Path7),
                                 transitShootCommand(),
                                 new AutoDriveCommand(follower, Path8),
-                                intakeDuringPath(Path9),
-                                intakeDuringPath(Path10),
+                                intakeDuringPath(Path9, 300),
+                                intakeDuringPath(Path10, 300),
                                 new AutoDriveCommand(follower, Path11),
                                 transitShootCommand(),
                                 intakeDuringPath(Path12),
