@@ -79,15 +79,15 @@ public class BlueNear extends CommandOpMode {
         Path1 = follower.pathBuilder().addPath(
                         new BezierLine(
                                 new Pose(25.831, 128.559),
-                                new Pose(51.229, 98.674)
+                                new Pose(50.230, 119.245)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(142), Math.toRadians(-90))
                 .build();
 
         Path2 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(51.229, 98.674),
-                                new Pose(64.052, 57.252),
+                                new Pose(50.230, 119.245),
+                                new Pose(80.829, 63.244),
                                 new Pose(20.372, 59.917)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(-90), Math.toRadians(180))
@@ -96,15 +96,15 @@ public class BlueNear extends CommandOpMode {
         Path3 = follower.pathBuilder().addPath(
                         new BezierLine(
                                 new Pose(20.372, 59.917),
-                                new Pose(57.596, 86.309)
+                                new Pose(51.205, 81.516)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(-90))
                 .build();
 
         Path4 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(57.596, 86.309),
-                                new Pose(39.687, 70.659),
+                                new Pose(51.205, 81.516),
+                                new Pose(42.483, 68.662),
                                 new Pose(15.394, 65.999)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(-90), Math.toRadians(180))
@@ -113,33 +113,34 @@ public class BlueNear extends CommandOpMode {
         Path5 = follower.pathBuilder().addPath(
                         new BezierLine(
                                 new Pose(15.394, 65.999),
-                                new Pose(16.320, 55.921)
+                                new Pose(19.915, 63.710)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(135))
+                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
                 .setTimeoutConstraint(100)
                 .build();
 
         Path6 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(16.320, 55.921),
-                                new Pose(12.085, 54.896)
+                                new Pose(19.915, 63.710),
+                                new Pose(12.284, 57.293)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(135))
+                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(135))
                 .setTimeoutConstraint(100)
                 .build();
 
         Path7 = follower.pathBuilder().addPath(
-                        new BezierLine(
-                                new Pose(12.085, 54.896),
-                                new Pose(57.208, 86.198)
+                        new BezierCurve(
+                                new Pose(12.284, 57.293),
+                                new Pose(52.527, 65.051),
+                                new Pose(51.416, 81.205)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(-90))
                 .build();
 
         Path8 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(57.208, 86.198),
-                                new Pose(40.352, 70.954),
+                                new Pose(51.416, 81.205),
+                                new Pose(42.150, 68.557),
                                 new Pose(15.497, 65.897)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(-90), Math.toRadians(180))
@@ -148,49 +149,49 @@ public class BlueNear extends CommandOpMode {
         Path9 = follower.pathBuilder().addPath(
                         new BezierLine(
                                 new Pose(15.497, 65.897),
-                                new Pose(16.258, 55.877)
+                                new Pose(20.053, 64.065)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(135))
+                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
                 .setTimeoutConstraint(100)
                 .build();
 
         Path10 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(16.258, 55.877),
-                                new Pose(12.230, 54.850)
+                                new Pose(20.053, 64.065),
+                                new Pose(12.430, 57.447)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(135))
+                ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(135))
                 .setTimeoutConstraint(100)
                 .build();
 
         Path11 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(12.230, 54.850),
-                                new Pose(50.482, 66.514),
-                                new Pose(57.175, 86.175)
+                                new Pose(12.430, 57.447),
+                                new Pose(52.679, 65.915),
+                                new Pose(51.782, 83.778)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(180))
                 .build();
 
         Path12 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(57.175, 86.175),
-                                new Pose(19.907, 84.313)
+                                new Pose(51.782, 83.778),
+                                new Pose(19.508, 83.714)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
                 .build();
 
         Path13 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(19.907, 84.313),
-                                new Pose(57.293, 86.057)
+                                new Pose(19.508, 83.714),
+                                new Pose(51.900, 83.860)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(-90))
                 .build();
 
         Path14 = follower.pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(57.293, 86.057),
+                                new Pose(51.900, 83.860),
                                 new Pose(78.872, 37.540),
                                 new Pose(22.968, 35.950)
                         )
@@ -200,7 +201,7 @@ public class BlueNear extends CommandOpMode {
         Path15 = follower.pathBuilder().addPath(
                         new BezierLine(
                                 new Pose(22.968, 35.950),
-                                new Pose(53.949, 85.584)
+                                new Pose(42.341, 92.871)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(-90))
                 .build();
