@@ -116,6 +116,7 @@ public class BlueNear extends CommandOpMode {
                                 new Pose(16.320, 55.921)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(135))
+                .setTimeoutConstraint(100)
                 .build();
 
         Path6 = follower.pathBuilder().addPath(
@@ -124,6 +125,7 @@ public class BlueNear extends CommandOpMode {
                                 new Pose(12.085, 54.896)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(135))
+                .setTimeoutConstraint(100)
                 .build();
 
         Path7 = follower.pathBuilder().addPath(
@@ -149,6 +151,7 @@ public class BlueNear extends CommandOpMode {
                                 new Pose(16.258, 55.877)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(135))
+                .setTimeoutConstraint(100)
                 .build();
 
         Path10 = follower.pathBuilder().addPath(
@@ -157,6 +160,7 @@ public class BlueNear extends CommandOpMode {
                                 new Pose(12.230, 54.850)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(135))
+                .setTimeoutConstraint(100)
                 .build();
 
         Path11 = follower.pathBuilder().addPath(
