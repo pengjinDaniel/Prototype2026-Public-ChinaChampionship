@@ -8,7 +8,6 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.ParallelDeadlineGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.WaitCommand;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
@@ -47,7 +46,7 @@ public class BlueNear extends CommandOpMode {
 
     public Command transitShootCommand() {
         return new SequentialCommandGroup(
-                new TransitCommand(shooter, transit, intake, 800),
+                new TransitCommand(shooter, transit, intake),
                 new InstantCommand(() -> intake.setIntakeState(Intake.IntakeState.STOP)),
                 new ConditionalCommand(
                         new LedWinkCommand(led),
@@ -64,13 +63,6 @@ public class BlueNear extends CommandOpMode {
         ).andThen(new InstantCommand(() -> intake.setIntakeState(Intake.IntakeState.STOP)));
     }
 
-    public Command intakeDuringPath(PathChain path, double timeoutMs) {
-        return new ParallelDeadlineGroup(
-                new AutoDriveCommand(follower, path, timeoutMs),
-                new IntakeCommand(intake, transit)
-        ).andThen(new InstantCommand(() -> intake.setIntakeState(Intake.IntakeState.STOP)));
-    }
-
     @Override
     public void initialize() {
         this.follower = Constants.createFollower(hardwareMap);
@@ -82,11 +74,11 @@ public class BlueNear extends CommandOpMode {
         this.led = new Led(hardwareMap);
         this.alliance = Drive.Alliance.BLUE;
 
-        follower.setStartingPose(new Pose(25.431, 128.559, Math.toRadians(142)));
+        follower.setStartingPose(new Pose(25.831, 128.559, Math.toRadians(142)));
 
         Path1 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(25.431, 128.559),
+                                new Pose(25.831, 128.559),
                                 new Pose(51.229, 98.674)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(142), Math.toRadians(-90))
@@ -220,14 +212,12 @@ public class BlueNear extends CommandOpMode {
                                 transitShootCommand(),
                                 new AutoDriveCommand(follower, Path4),
                                 intakeDuringPath(Path5),
-                                intakeDuringPath(Path6, 600),
-                                new WaitCommand(500),
+                                intakeDuringPath(Path6),
                                 new AutoDriveCommand(follower, Path7),
                                 transitShootCommand(),
                                 new AutoDriveCommand(follower, Path8),
                                 intakeDuringPath(Path9),
-                                intakeDuringPath(Path10, 600),
-                                new WaitCommand(500),
+                                intakeDuringPath(Path10),
                                 new AutoDriveCommand(follower, Path11),
                                 transitShootCommand(),
                                 intakeDuringPath(Path12),

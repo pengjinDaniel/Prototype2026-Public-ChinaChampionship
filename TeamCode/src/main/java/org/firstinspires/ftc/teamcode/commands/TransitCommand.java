@@ -13,34 +13,20 @@ public class TransitCommand extends CommandBase {
     private final Intake intake;
     private boolean hasOpened;
     private final ElapsedTime openTimer;
-    private static final double DEFAULT_SHOOT_TIME_MS = 750;
-    private static final double FAR_SHOOT_TIME_MS = 1050;
-    private final double configuredShootTimeMs;
-    private double shootTimeMs;
+    private static double delay = 750;
 
     public TransitCommand(Shooter shooter, Transit transit, Intake intake) {
-        this(shooter, transit, intake, Double.NaN);
-    }
-
-    public TransitCommand(Shooter shooter, Transit transit, Intake intake, double shootTimeMs) {
         this.shooter = shooter;
         this.transit = transit;
         this.intake = intake;
-        this.configuredShootTimeMs = shootTimeMs;
-        this.shootTimeMs = getInitialShootTimeMs();
         this.hasOpened = false;
         this.openTimer = new ElapsedTime();
-    }
-
-    private double getInitialShootTimeMs() {
-        return Double.isNaN(configuredShootTimeMs) ? DEFAULT_SHOOT_TIME_MS : configuredShootTimeMs;
     }
 
     @Override
     public void initialize() {
         transit.setState(Transit.TransitState.CLOSE);
         hasOpened = false;
-        shootTimeMs = getInitialShootTimeMs();
         openTimer.reset();
     }
 
@@ -56,9 +42,7 @@ public class TransitCommand extends CommandBase {
                 if (shooter.getPitchState() == Shooter.PitchState.FAR1
                         || shooter.getPitchState() == Shooter.PitchState.FAR2) {
                     intake.setIntakeState(Intake.IntakeState.FARSHOOT);
-                    if (Double.isNaN(configuredShootTimeMs)) {
-                        shootTimeMs = FAR_SHOOT_TIME_MS;
-                    }
+                    delay = 1050;
                 }
                 else intake.setIntakeState(Intake.IntakeState.FORWARD);
             }
@@ -67,6 +51,6 @@ public class TransitCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return hasOpened && openTimer.milliseconds() > shootTimeMs;
+        return hasOpened && openTimer.milliseconds() > delay;
     }
 }
