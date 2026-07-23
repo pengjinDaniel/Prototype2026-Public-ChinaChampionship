@@ -88,14 +88,14 @@ public class RedNear extends CommandOpMode {
                         new BezierCurve(
                                 new Pose(93.770, 119.245),
                                 new Pose(63.171, 63.244),
-                                new Pose(123.628, 59.917)
+                                new Pose(121.393, 59.544)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(0))
                 .build();
 
         Path3 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(123.628, 59.917),
+                                new Pose(121.393, 59.544),
                                 new Pose(92.795, 81.516)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(90))
@@ -116,7 +116,7 @@ public class RedNear extends CommandOpMode {
                                 new Pose(124.085, 63.710)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(45))
-                .setTimeoutConstraint(100)
+                .setTimeoutConstraint(200)
                 .build();
 
         Path6 = follower.pathBuilder().addPath(
@@ -125,7 +125,7 @@ public class RedNear extends CommandOpMode {
                                 new Pose(131.716, 57.293)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(45))
-                .setTimeoutConstraint(100)
+                .setTimeoutConstraint(200)
                 .build();
 
         Path7 = follower.pathBuilder().addPath(
@@ -152,7 +152,7 @@ public class RedNear extends CommandOpMode {
                                 new Pose(123.947, 64.065)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(45))
-                .setTimeoutConstraint(100)
+                .setTimeoutConstraint(200)
                 .build();
 
         Path10 = follower.pathBuilder().addPath(
@@ -161,7 +161,7 @@ public class RedNear extends CommandOpMode {
                                 new Pose(131.570, 57.447)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(45))
-                .setTimeoutConstraint(100)
+                .setTimeoutConstraint(200)
                 .build();
 
         Path11 = follower.pathBuilder().addPath(

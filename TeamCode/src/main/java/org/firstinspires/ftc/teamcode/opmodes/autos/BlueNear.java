@@ -88,14 +88,14 @@ public class BlueNear extends CommandOpMode {
                         new BezierCurve(
                                 new Pose(50.230, 119.245),
                                 new Pose(80.829, 63.244),
-                                new Pose(20.372, 59.917)
+                                new Pose(22.607, 59.544)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(-90), Math.toRadians(180))
                 .build();
 
         Path3 = follower.pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(20.372, 59.917),
+                                new Pose(22.607, 59.544),
                                 new Pose(51.205, 81.516)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(-90))
